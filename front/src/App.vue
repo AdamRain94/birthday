@@ -1,25 +1,21 @@
 <script>
 import {defineComponent} from 'vue';
-import Header from '@/components/Header.vue';
-import Main from '@/components/Main.vue';
-import Footer from '@/components/Footer.vue';
+import GeneralPage from '@/components/GeneralPage.vue';
 
 export default defineComponent({
-    components: {Footer, Main, Header}
+    components: {GeneralPage}
 });
 </script>
 
 <template>
-    <div class="wrapper">
-        <header>
-            <Header/>
-        </header>
-        <main>
-            <Main/>
-        </main>
-        <footer>
-            <Footer/>
-        </footer>
-    </div>
+    <GeneralPage class="general"/>
 </template>
 
+<style scoped>
+.general{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+</style>
