@@ -1,9 +1,9 @@
 <template>
     <div class="container">
         <div class="window">
-            <diV class="header">
+            <div class="header">
                 Авторизация
-            </diV>
+            </div>
             <div class="main">
                 <div @click="registration" class="registration">Регистрация →</div>
                 <div class="message">{{ message }}</div>
@@ -74,7 +74,6 @@ export default {
     cursor: default;
     width: 100%;
     padding: 10px;
-    text-align: center;
     border-top-left-radius: 11px;
     border-top-right-radius: 11px;
     background-color: var(--2-color);

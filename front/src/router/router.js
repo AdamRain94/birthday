@@ -1,9 +1,9 @@
 import {createRouter, createWebHistory} from 'vue-router';
-import Authorization from "@/components/Authorization.vue";
-import Main from '@/components/Main.vue';
-import Registration from '@/components/Registration.vue';
-import Page from '@/components/Page.vue';
-import Sidebar from '@/components/Sidebar.vue';
+import Authorization from "@/components/Pages/AuthorizationPage.vue";
+import Main from '@/components/Sections/Main.vue';
+import Registration from '@/components/Pages/RegistrationPage.vue';
+import Page from '@/components/Pages/UserPage.vue';
+import Sidebar from '@/components/Bar/Sidebar.vue';
 const routes = [
     {
         path: '/authorization',

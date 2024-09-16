@@ -4,7 +4,7 @@
 
 <template>
     <div class="layout">
-        <router-view name="sidebar" class="layout-left p-2" v-slot="{ Component }">
+        <router-view name="sidebar" class="layout-left pr-2" v-slot="{ Component }">
             <component :is="Component"/>
         </router-view>
         <router-view class="layout-right" v-slot="{ Component }">
@@ -20,12 +20,10 @@
     height: 100%;
 }
 .layout .layout-left{
-    min-width: 20%;
+    min-width: 160px;
 }
 .layout .layout-right{
-    width: 80%;
+    width: 740px;
 }
-.p-2{
-    padding-right: 10px;
-}
+
 </style>

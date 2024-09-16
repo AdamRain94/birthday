@@ -1,8 +1,8 @@
 <script>
 import {defineComponent} from 'vue';
-import Header from '@/components/Header.vue';
-import Main from '@/components/Main.vue';
-import Footer from '@/components/Footer.vue';
+import Header from '@/components/Sections/Header.vue';
+import Main from '@/components/Sections/Main.vue';
+import Footer from '@/components/Sections/Footer.vue';
 
 export default defineComponent({
     components: {Footer, Main, Header}
@@ -10,7 +10,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div>
+    <div class="general">
         <Header class="header"/>
         <Main class="main"/>
     </div>

@@ -1,6 +1,6 @@
 <script>
 import {defineComponent} from 'vue';
-import GeneralPage from '@/components/GeneralPage.vue';
+import GeneralPage from '@/components/Pages/GeneralPage.vue';
 
 export default defineComponent({
     components: {GeneralPage}
