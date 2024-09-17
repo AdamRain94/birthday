@@ -54,7 +54,7 @@ export default {
 .container {
     display: flex;
     align-items: center;
-    min-height: 100vh;
+    height: 100%;
     margin: 0 auto;
 }
 
