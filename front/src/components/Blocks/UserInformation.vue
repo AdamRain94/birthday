@@ -48,7 +48,7 @@ export default {
 
 .photo {
     aspect-ratio: 1 / 1;
-    width: 150px;
+    width: 230px;
     margin-right: 20px;
     border-radius: 50%;
     object-fit: cover;

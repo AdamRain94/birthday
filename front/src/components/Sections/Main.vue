@@ -23,7 +23,7 @@
     min-width: 160px;
 }
 .layout .layout-right{
-    width: 740px;
+    width: 760px;
 }
 
 </style>

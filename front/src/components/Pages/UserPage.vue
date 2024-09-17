@@ -41,7 +41,7 @@ export default {
 }
 
 .block_2 .right {
-    width: 220px;
+    width: 240px;
     display: flex;
     flex-direction: column;
 }
