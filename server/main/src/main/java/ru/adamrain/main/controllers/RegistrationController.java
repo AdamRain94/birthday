@@ -17,10 +17,9 @@ public class RegistrationController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody User user) {
         try {
-            userService.registerUser(user);
-            return ResponseEntity.ok("Регистрация прошла успешно");
+            return ResponseEntity.ok(userService.registerUser(user));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -2,9 +2,11 @@
 import UserInformation from "@/components/Blocks/UserInformation.vue";
 import UserDesires from "@/components/Blocks/UserDesires.vue";
 import UserSubscriptions from "@/components/Blocks/UserSubscriptions.vue";
+import {mapGetters} from 'vuex';
 
 export default {
     components: {UserDesires, UserInformation,UserSubscriptions},
+
 };
 </script>
 

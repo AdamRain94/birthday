@@ -5,7 +5,9 @@
 <template>
     <div class="layout">
         <router-view name="sidebar" class="layout-left pr-2" v-slot="{ Component }">
-            <component :is="Component"/>
+            <transition name="fade" mode="out-in">
+                <component :is="Component"/>
+            </transition>
         </router-view>
         <router-view class="layout-right" v-slot="{ Component }">
             <transition name="fade" mode="out-in">

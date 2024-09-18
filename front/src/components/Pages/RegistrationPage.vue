@@ -15,7 +15,11 @@
                            @input="checkPasswords"/>
                 </div>
                 <div class="buttons">
-                    <button :disabled="isDisabled" @click="enter" class="btn">Регистрация</button>
+                    <button :disabled="isDisabled || isLoading" @click="enter" class="btn"
+                            :class="{ loading : isLoading}">
+                        <span v-if="isLoading">Загрузка...</span>
+                        <span v-else>Регистрация</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -46,8 +50,7 @@ export default {
             }
         },
         async enter() {
-            this.isLoading = true; // Начинаем загрузку
-            this.message = '';
+            this.isLoading = true;
             this.message = '';
             await this.register({
                 name: this.name,
@@ -62,7 +65,7 @@ export default {
                 })
                 .finally(() => {
                     this.isLoading = false;
-                })
+                });
 
         },
         authorization() {
@@ -134,5 +137,12 @@ export default {
     top: 55px;
     color: var(--4-color);
     cursor: default;
+}
+
+.btn.loading {
+    background: linear-gradient(90deg, var(--2-color) 0%, var(--2-color20) 50%, var(--2-color) 100%);
+    background-size: 200% 100%;
+    animation: loadingAnimation 1.5s ease-in-out infinite;
+    color: var(--3-color);
 }
 </style>

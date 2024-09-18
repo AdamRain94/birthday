@@ -1,5 +1,6 @@
 package ru.adamrain.main.entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -16,6 +17,7 @@ public class User {
     private Date dateOfBirth;
     @Column(unique = true)
     private String tel;
+    @JsonIgnore
     private String password;
     private Date dateRegistration;
 

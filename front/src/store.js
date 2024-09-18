@@ -7,8 +7,7 @@ const store = createStore({
     state() {
         return {
             isAuthenticated: !!localStorage.getItem('isAuthenticated'),
-            // user: JSON.parse(localStorage.getItem('user')) || null,
-            user: null,
+            user: JSON.parse(localStorage.getItem('user')) || null,
             error: null
         };
     },
@@ -18,7 +17,7 @@ const store = createStore({
             state.user = user;
             state.error = null;
             localStorage.setItem('isAuthenticated', true);
-            // localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('user', JSON.stringify(user));
         },
         logout(state) {
             state.isAuthenticated = false;
@@ -31,12 +30,14 @@ const store = createStore({
         },
         setUser(state, user) {
             state.user = user;
-        }
+            localStorage.setItem('user', JSON.stringify(user));
+        },
     },
     actions: {
         async login({commit}, credentials) {
             await axios.post('http://localhost:8080/api/authorization/login', credentials).then(data => {
-                commit('login', data.data.user);
+                commit('login', data.data);
+                console.log(data.data)
             }).catch(error => {
                 commit('setError', error);
                 throw error;
@@ -54,8 +55,7 @@ const store = createStore({
         async register({commit}, user) {
             await axios.post('http://localhost:8080/api/register', user)
                 .then(data => {
-                    commit('setUser', data.data.user);
-                    commit('login', data.data.user);
+                    commit('login', data.data);
                 })
                 .catch(error => {
                     commit('setError', error);
@@ -68,6 +68,7 @@ const store = createStore({
             return state.isAuthenticated;
         },
         user(state) {
+            console.log(state.user)
             return state.user;
         },
         error(state) {

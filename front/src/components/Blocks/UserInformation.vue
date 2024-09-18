@@ -1,19 +1,31 @@
 <script>
 import img from '@/assets/images/photo_2024-02-27_18-38-46.jpg';
+import {mapGetters} from 'vuex';
+import moment from 'moment';
 
 export default {
     data() {
         return {
-            photo: img,
+            photo: img
         };
     },
+    computed: {
+        ...mapGetters(['user']),
+        dateOfBirth() {
+            // Проверка, если дата рождения существует
+            return this.user.dateOfBirth
+                ? moment(this.user.dateOfBirth).format('DD.MM.YYYY')
+                : ''; // Можно указать другое сообщение или формат
+        }
+    }
 };
 </script>
 
 <template>
     <div class="window">
+        {{user}}
         <div class="header">
-            <div class="fio">Кузнецов Николай Комодович</div>
+            <div class="fio">{{ user.fam }} {{ user.name }} {{ user.otch }}</div>
             <div class="online">последний раз в сети 15.09.24 15:16</div>
         </div>
         <div class="main">
@@ -21,11 +33,11 @@ export default {
             <div class="information">
                 <div class="info">
                     <div>День рождения:</div>
-                    <div>17.09.1994</div>
+                    <div>{{dateOfBirth}}</div>
                 </div>
                 <div class="info">
-                    <div>Место жительства:</div>
-                    <div>Дудинка</div>
+                    <div>Номер телефон</div>
+                    <div>{{user.tel}}</div>
                 </div>
                 <div class="info">
                     <div>Место учёбы:</div>
