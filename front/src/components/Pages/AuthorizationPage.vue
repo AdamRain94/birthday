@@ -12,7 +12,10 @@
                     <input v-model="password" placeholder="Пароль" type="password"/>
                 </div>
                 <div class="buttons">
-                    <button :disabled="isDisabled" @click="enter" class="btn">Войти</button>
+                    <button :disabled="isDisabled || isLoading" @click="enter" class="btn" :class="{ loading : isLoading}">
+                        <span v-if="isLoading">Загрузка...</span>
+                        <span v-else>Войти</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -28,19 +31,25 @@ export default {
         return {
             tel: '',
             password: '',
-            message: ''
+            message: '',
+            isLoading: false
         };
     },
     methods: {
         ...mapActions(['login', 'logout']),
         enter() {
+            this.isLoading = true; // Начинаем загрузку
+            this.message = '';
             this.login({tel: this.tel, password: this.password})
                 .then(() => {
                     this.$router.push('/page');
                 })
-                .catch(() => {
-                    this.message = 'Ошибка авторизации';
-                });
+                .catch((error) => {
+                    this.message = error.response.data;
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                })
         },
         registration() {
             router.push('/registration');
@@ -113,7 +122,23 @@ export default {
 .message {
     position: absolute;
     top: 55px;
-    color: red;
+    color: var(--4-color);
     cursor: default;
+}
+
+.btn.loading {
+    background: linear-gradient(90deg, var(--2-color) 0%, var(--2-color20) 50%, var(--2-color) 100%);
+    background-size: 200% 100%;
+    animation: loadingAnimation 1.5s ease-in-out infinite;
+    color: var(--3-color);
+}
+
+@keyframes loadingAnimation {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 </style>

@@ -8,22 +8,37 @@
             <component :is="Component"/>
         </router-view>
         <router-view class="layout-right" v-slot="{ Component }">
-            <component :is="Component"/>
+            <transition name="fade" mode="out-in">
+                <component :is="Component"/>
+            </transition>
         </router-view>
     </div>
 </template>
 
 <style scoped>
-.layout{
+.layout {
     display: flex;
     width: 100%;
     height: 100%;
 }
-.layout .layout-left{
+
+.layout .layout-left {
     min-width: 160px;
 }
-.layout .layout-right{
+
+.layout .layout-right {
     width: 760px;
 }
 
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to {
+    opacity: 1;
+}
 </style>

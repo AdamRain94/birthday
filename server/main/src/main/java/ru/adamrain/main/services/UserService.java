@@ -20,14 +20,13 @@ public class UserService {
         if (userRepository.findByTel(user.getTel()) != null) {
             throw new RuntimeException("Номер телефона уже зарегистрирован");
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Шифруем пароль
         return userRepository.save(user);
     }
 
     public User authorization(String tel, String password) {
         User user = userRepository.findByTel(tel);
-        if (user != null && password.matches(user.getPassword())) return user;
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) return user;
         return null;
     }
 }

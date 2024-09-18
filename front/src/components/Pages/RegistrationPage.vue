@@ -33,7 +33,8 @@ export default {
             tel: '',
             password: '',
             password_2: '',
-            message: ''
+            message: '',
+            isLoading: false
         };
     },
     methods: {
@@ -45,16 +46,24 @@ export default {
             }
         },
         async enter() {
-            try {
-                this.message = '';
-                await this.register({
-                    name: this.name,
-                    tel: this.tel,
-                    password: this.password
-                });
-            } catch (error) {
-                this.message = await this.error;
-            }
+            this.isLoading = true; // Начинаем загрузку
+            this.message = '';
+            this.message = '';
+            await this.register({
+                name: this.name,
+                tel: this.tel,
+                password: this.password
+            })
+                .then(() => {
+                    this.$router.push('/page');
+                })
+                .catch((error) => {
+                    this.message = error.response.data;
+                })
+                .finally(() => {
+                    this.isLoading = false;
+                })
+
         },
         authorization() {
             router.push('/authorization');
@@ -123,7 +132,7 @@ export default {
     padding: 0 20px;
     text-align: center;
     top: 55px;
-    color: red;
+    color: var(--4-color);
     cursor: default;
 }
 </style>

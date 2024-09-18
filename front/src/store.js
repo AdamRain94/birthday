@@ -39,7 +39,7 @@ const store = createStore({
                 commit('login', data.data.user);
             }).catch(error => {
                 commit('setError', error);
-
+                throw error;
             });
         },
         async logout({commit}) {
@@ -56,11 +56,9 @@ const store = createStore({
                 .then(data => {
                     commit('setUser', data.data.user);
                     commit('login', data.data.user);
-                    router.push('/page');
                 })
                 .catch(error => {
-                    const response = error.response;
-                    commit('setError', response.data);
+                    commit('setError', error);
                     throw error;
                 });
         }

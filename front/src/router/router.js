@@ -3,6 +3,7 @@ import Authorization from '@/components/Pages/AuthorizationPage.vue';
 import Main from '@/components/Sections/Main.vue';
 import Registration from '@/components/Pages/RegistrationPage.vue';
 import Page from '@/components/Pages/UserPage.vue';
+import Page2 from '@/components/Pages/UserPage2.vue';
 import Sidebar from '@/components/Bar/Sidebar.vue';
 import store from '@/store';
 
@@ -30,6 +31,15 @@ const routes = [
         name: 'page',
         components: {
             default: Page,
+            sidebar: Sidebar
+        },
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/page2',
+        name: 'page2',
+        components: {
+            default: Page2,
             sidebar: Sidebar
         },
         meta: {requiresAuth: true}

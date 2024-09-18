@@ -25,7 +25,7 @@ public class AuthorizationController {
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неверный логин или пароль");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неверный логин или пароль!");
         }
     }
 
