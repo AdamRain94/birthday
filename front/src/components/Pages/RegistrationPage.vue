@@ -6,11 +6,13 @@
             </div>
             <div class="main">
                 <div class="message">{{ message }}</div>
+                <div @click="authorization" class="authorization">← Войти</div>
                 <div>
                     <input v-model="name" placeholder="Имя"/>
                     <input v-model="tel" placeholder="Номер телефона" type="tel"/>
                     <input v-model="password" placeholder="Пароль" type="password" @input="checkPasswords"/>
-                    <input v-model="password_2" placeholder="Подтвердите пароль" type="password" @input="checkPasswords"/>
+                    <input v-model="password_2" placeholder="Подтвердите пароль" type="password"
+                           @input="checkPasswords"/>
                 </div>
                 <div class="buttons">
                     <button :disabled="isDisabled" @click="enter" class="btn">Регистрация</button>
@@ -22,6 +24,7 @@
 
 <script>
 import router from '@/router/router.js';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
     data() {
@@ -30,21 +33,35 @@ export default {
             tel: '',
             password: '',
             password_2: '',
-            message: '',
+            message: ''
         };
     },
     methods: {
-        checkPasswords(){
+        ...mapActions(['register']),
+        checkPasswords() {
             this.message = '';
             if (this.password_2 !== this.password) {
                 this.message = 'Пароли не совпадают!';
             }
         },
-        enter() {
-            router.push('/page');
+        async enter() {
+            try {
+                this.message = '';
+                await this.register({
+                    name: this.name,
+                    tel: this.tel,
+                    password: this.password
+                });
+            } catch (error) {
+                this.message = await this.error;
+            }
         },
+        authorization() {
+            router.push('/authorization');
+        }
     },
     computed: {
+        ...mapGetters(['error']),
         isDisabled() {
             return !(
                 this.name !== '' &&
@@ -54,7 +71,7 @@ export default {
                 this.password === this.password_2
             );
         }
-    },
+    }
 };
 </script>
 
@@ -66,10 +83,19 @@ export default {
     margin: 0 auto;
 }
 
+.authorization {
+    align-self: start;
+    cursor: pointer;
+}
+
+.authorization:hover {
+    font-weight: 600;
+}
+
 .window {
     position: relative;
     width: 300px;
-    height: 400px;
+    height: 420px;
     margin: 0 auto;
 
 }

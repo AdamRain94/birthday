@@ -8,11 +8,11 @@
                 <div @click="registration" class="registration">Регистрация →</div>
                 <div class="message">{{ message }}</div>
                 <div>
-                    <input v-model="login" placeholder="Логин"/>
+                    <input v-model="tel" placeholder="Логин"/>
                     <input v-model="password" placeholder="Пароль" type="password"/>
                 </div>
                 <div class="buttons">
-                    <button @click="enter" class="btn">Войти</button>
+                    <button :disabled="isDisabled" @click="enter" class="btn">Войти</button>
                 </div>
             </div>
         </div>
@@ -21,30 +21,37 @@
 
 <script>
 import router from '@/router/router.js';
+import {mapActions} from 'vuex';
 
 export default {
     data() {
         return {
-            login: '',
+            tel: '',
             password: '',
             message: ''
         };
     },
     methods: {
+        ...mapActions(['login', 'logout']),
         enter() {
-            this.message = '';
-            if (this.login === '') {
-                this.message = 'Введите логин!';
-                return;
-            }
-            if (this.password === '') {
-                this.message = 'Введите пароль!';
-                return;
-            }
-            router.push('/page');
+            this.login({tel: this.tel, password: this.password})
+                .then(() => {
+                    this.$router.push('/page');
+                })
+                .catch(() => {
+                    this.message = 'Ошибка авторизации';
+                });
         },
         registration() {
             router.push('/registration');
+        }
+    },
+    computed: {
+        isDisabled() {
+            return !(
+                this.tel !== '' &&
+                this.password !== ''
+            );
         }
     }
 };
