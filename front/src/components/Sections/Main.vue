@@ -26,10 +26,13 @@
 
 .layout .layout-left {
     min-width: 160px;
+    height: 100%;
 }
 
 .layout .layout-right {
+    position: relative;
     width: 760px;
+    height: 100%;
 }
 
 .fade-enter-active, .fade-leave-active {

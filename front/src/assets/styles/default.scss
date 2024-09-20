@@ -30,6 +30,7 @@ html, body, #app {
   font-size: 14px;
   cursor: default;
   color: var(--3-color);
+  caret-color: transparent;
   scrollbar-width: none; /* Для Firefox */
   -ms-overflow-style: none; /* Для Internet Explorer и Edge */
 }
@@ -41,6 +42,7 @@ input {
   border: none;
   background-color: var(--2-color20);
   border-radius: 6px;
+  caret-color: var(--3-color);
   color: var(--3-color);
 }
 

@@ -36,4 +36,8 @@ export default defineComponent({
     border-bottom: 1px solid var(--2-color50);
     background: var(--1-color);
 }
+
+.general{
+    height: 100%;
+}
 </style>

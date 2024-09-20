@@ -6,13 +6,14 @@
             </div>
             <div class="main">
                 <div>
-                <div @click="authorization" class="authorization">← Авторизация</div>
-                    <input v-model="name" maxlength="20" placeholder="Имя"/>
-                    <input v-model="tel" maxlength="18" minlength="3" placeholder="Номер телефона" type="tel"/>
-                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password" @input="checkPasswords"/>
+                    <div @click="authorization" class="authorization">← Авторизация</div>
+                    <input v-model="name" maxlength="20" placeholder="Имя" @input="filterName"/>
+                    <input v-model="tel" maxlength="18" placeholder="Номер телефона" type="tel" @input="filterTel"/>
+                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password"
+                           @input="checkPasswords"/>
                     <input v-model="password_2" maxlength="20" placeholder="Подтвердите пароль" type="password"
                            @input="checkPasswords"/>
-                <div class="message">{{ message }}</div>
+                    <div class="message">{{ message }}</div>
                 </div>
                 <div class="buttons">
                     <button :disabled="isDisabled || isLoading" @click="enter" class="btn"
@@ -70,7 +71,20 @@ export default {
         },
         authorization() {
             router.push('/authorization');
-        }
+        },
+        filterName() {
+            // Фильтруем только русские буквы
+            const regex = /^[А-Яа-яЁё\s]*$/;
+            if (!regex.test(this.name)) {
+                this.name = this.name.replace(/[^А-Яа-яЁё\s]/g, '');
+            }
+        },
+        filterTel() {
+            const regex = /^[0-9()+-]*$/;
+            if (!regex.test(this.tel)) {
+                this.tel = this.tel.replace(/[^0-9()+-]/g, '');
+            }
+        },
     },
     computed: {
         ...mapGetters(['error']),
@@ -125,6 +139,7 @@ export default {
     text-align: center;
     color: white;
 }
+
 .authorization {
     padding-bottom: 2px;
     display: flex;

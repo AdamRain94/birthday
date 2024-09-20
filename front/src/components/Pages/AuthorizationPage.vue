@@ -7,7 +7,7 @@
             <div class="main">
                 <div>
                     <div @click="registration" class="registration">Регистрация →</div>
-                    <input v-model="tel" maxlength="18" placeholder="Номер телефона"/>
+                    <input v-model="tel" maxlength="18" placeholder="Номер телефона" @input="filterTel"/>
                     <input v-model="password" maxlength="20" placeholder="Пароль" type="password"/>
                     <div class="message" >{{ message }}</div>
                 </div>
@@ -54,7 +54,13 @@ export default {
         },
         registration() {
             router.push('/registration');
-        }
+        },
+        filterTel() {
+            const regex = /^[0-9()+-]*$/;
+            if (!regex.test(this.tel)) {
+                this.tel = this.tel.replace(/[^0-9()+-]/g, '');
+            }
+        },
     },
     computed: {
         isDisabled() {
