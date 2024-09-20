@@ -11,10 +11,13 @@ export default {
     },
     computed: {
         ...mapGetters(['user']),
+        userInfo(){
+          return this.user || {};
+        },
         dateOfBirth() {
             // Проверка, если дата рождения существует
-            return this.user.dateOfBirth
-                ? moment(this.user.dateOfBirth).format('DD.MM.YYYY')
+            return this.userInfo.dateOfBirth
+                ? moment(this.userInfo.dateOfBirth).format('DD.MM.YYYY')
                 : ''; // Можно указать другое сообщение или формат
         }
     }
@@ -22,10 +25,9 @@ export default {
 </script>
 
 <template>
-    <div class="window">
-        {{user}}
+    <div class="window" >
         <div class="header">
-            <div class="fio">{{ user.fam }} {{ user.name }} {{ user.otch }}</div>
+            <div class="fio">{{ userInfo.fam }} {{ userInfo.name }} {{ userInfo.otch }}</div>
             <div class="online">последний раз в сети 15.09.24 15:16</div>
         </div>
         <div class="main">
@@ -37,7 +39,7 @@ export default {
                 </div>
                 <div class="info">
                     <div>Номер телефон</div>
-                    <div>{{user.tel}}</div>
+                    <div>{{userInfo.tel}}</div>
                 </div>
                 <div class="info">
                     <div>Место учёбы:</div>
@@ -77,6 +79,7 @@ export default {
     font-size: 1.6em;
     font-weight: 600;
     color: white;
+    min-height: 27px;
 }
 
 .header .online {

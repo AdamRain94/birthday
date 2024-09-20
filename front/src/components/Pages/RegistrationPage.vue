@@ -5,14 +5,14 @@
                 Регистрация
             </div>
             <div class="main">
-                <div class="message">{{ message }}</div>
-                <div @click="authorization" class="authorization">← Войти</div>
                 <div>
-                    <input v-model="name" placeholder="Имя"/>
-                    <input v-model="tel" placeholder="Номер телефона" type="tel"/>
-                    <input v-model="password" placeholder="Пароль" type="password" @input="checkPasswords"/>
-                    <input v-model="password_2" placeholder="Подтвердите пароль" type="password"
+                <div @click="authorization" class="authorization">← Авторизация</div>
+                    <input v-model="name" maxlength="20" placeholder="Имя"/>
+                    <input v-model="tel" maxlength="18" minlength="3" placeholder="Номер телефона" type="tel"/>
+                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password" @input="checkPasswords"/>
+                    <input v-model="password_2" maxlength="20" placeholder="Подтвердите пароль" type="password"
                            @input="checkPasswords"/>
+                <div class="message">{{ message }}</div>
                 </div>
                 <div class="buttons">
                     <button :disabled="isDisabled || isLoading" @click="enter" class="btn"
@@ -89,27 +89,18 @@ export default {
 
 <style scoped>
 .container {
-    display: flex;
-    align-items: center;
+    position: absolute;
+    left: 50%;
     height: 100%;
-    margin: 0 auto;
-}
-
-.authorization {
-    align-self: start;
-    cursor: pointer;
-}
-
-.authorization:hover {
-    font-weight: 600;
+    transform: translateX(-50%);
+    display: flex;
 }
 
 .window {
-    position: relative;
     width: 300px;
-    height: 420px;
-    margin: 0 auto;
-
+    height: 360px;
+    transform: translateY(-12%);
+    margin: auto auto;
 }
 
 .header {
@@ -117,8 +108,6 @@ export default {
 }
 
 .main {
-    display: flex;
-    width: 100%;
     flex-grow: 1;
     padding: 30px;
     flex-direction: column;
@@ -130,13 +119,30 @@ export default {
     width: 100%;
 }
 
+.title {
+    padding-bottom: 15px;
+    font-size: 1.2em;
+    text-align: center;
+    color: white;
+}
+.authorization {
+    padding-bottom: 2px;
+    display: flex;
+    justify-content: flex-start;
+    cursor: pointer;
+}
+
+.authorization:hover {
+    font-weight: 600;
+}
+
 .message {
-    position: absolute;
-    padding: 0 20px;
     text-align: center;
     top: 55px;
-    color: var(--4-color);
+    min-height: 20px;
     cursor: default;
+    font-size: 0.8em;
+    color: var(--4-color);
 }
 
 .btn.loading {
@@ -144,5 +150,14 @@ export default {
     background-size: 200% 100%;
     animation: loadingAnimation 1.5s ease-in-out infinite;
     color: var(--3-color);
+}
+
+@keyframes loadingAnimation {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 </style>

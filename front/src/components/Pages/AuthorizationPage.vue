@@ -5,14 +5,15 @@
                 Авторизация
             </div>
             <div class="main">
-                <div @click="registration" class="registration">Регистрация →</div>
-                <div class="message">{{ message }}</div>
                 <div>
-                    <input v-model="tel" placeholder="Логин"/>
-                    <input v-model="password" placeholder="Пароль" type="password"/>
+                    <div @click="registration" class="registration">Регистрация →</div>
+                    <input v-model="tel" maxlength="18" placeholder="Номер телефона"/>
+                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password"/>
+                    <div class="message" >{{ message }}</div>
                 </div>
                 <div class="buttons">
-                    <button :disabled="isDisabled || isLoading" @click="enter" class="btn" :class="{ loading : isLoading}">
+                    <button :disabled="isDisabled || isLoading" @click="enter" class="btn"
+                            :class="{ loading : isLoading}">
                         <span v-if="isLoading">Загрузка...</span>
                         <span v-else>Войти</span>
                     </button>
@@ -49,7 +50,7 @@ export default {
                 })
                 .finally(() => {
                     this.isLoading = false;
-                })
+                });
         },
         registration() {
             router.push('/registration');
@@ -62,47 +63,36 @@ export default {
                 this.password !== ''
             );
         }
-    }
+    },
+    //+7-(918)-512-58-36
 };
 </script>
 
 <style scoped>
 .container {
-    display: flex;
-    align-items: center;
+    position: absolute;
+    left: 50%;
     height: 100%;
-    margin: 0 auto;
+    transform: translateX(-50%);
+    display: flex;
 }
 
 .window {
-    display: flex;
-    flex-direction: column;
-    position: relative;
     width: 300px;
-    height: 300px;
-    margin: 0 auto;
-    border-radius: 12px;
-    background-color: var(--1-color);
-    border: 1px solid var(--2-color50);
+    height: 270px;
+    transform: translateY(-17%);
+    margin: auto auto;
 }
 
 .header {
-    cursor: default;
-    width: 100%;
-    padding: 10px;
-    border-top-left-radius: 11px;
-    border-top-right-radius: 11px;
-    background-color: var(--2-color);
     font-size: 1.2em;
 }
 
 .main {
-    display: flex;
-    width: 100%;
     flex-grow: 1;
     padding: 30px;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -110,8 +100,18 @@ export default {
     width: 100%;
 }
 
+.title {
+    padding-bottom: 15px;
+    font-size: 1.2em;
+    text-align: center;
+    color: white;
+}
+
+
 .registration {
-    align-self: end;
+    padding-bottom: 2px;
+    display: flex;
+    justify-content: flex-end;
     cursor: pointer;
 }
 
@@ -120,11 +120,14 @@ export default {
 }
 
 .message {
-    position: absolute;
+    text-align: center;
     top: 55px;
-    color: var(--4-color);
+    min-height: 20px;
     cursor: default;
+    font-size: 0.8em;
+    color: var(--4-color);
 }
+
 
 .btn.loading {
     background: linear-gradient(90deg, var(--2-color) 0%, var(--2-color20) 50%, var(--2-color) 100%);

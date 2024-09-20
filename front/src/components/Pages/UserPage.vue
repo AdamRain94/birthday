@@ -6,12 +6,14 @@ import {mapGetters} from 'vuex';
 
 export default {
     components: {UserDesires, UserInformation,UserSubscriptions},
-
+    computed: {
+        ...mapGetters(['user']),
+    }
 };
 </script>
 
 <template>
-    <div class="container">
+    <div class="container" v-if="user">
         <UserInformation class="mb-2"/>
         <div class="block_2">
             <div class="left mr-2">

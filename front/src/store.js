@@ -37,7 +37,6 @@ const store = createStore({
         async login({commit}, credentials) {
             await axios.post('http://localhost:8080/api/authorization/login', credentials).then(data => {
                 commit('login', data.data);
-                console.log(data.data)
             }).catch(error => {
                 commit('setError', error);
                 throw error;
@@ -68,11 +67,9 @@ const store = createStore({
             return state.isAuthenticated;
         },
         user(state) {
-            console.log(state.user)
             return state.user;
         },
         error(state) {
-            console.log(state.error);
             return state.error;
         }
     }
