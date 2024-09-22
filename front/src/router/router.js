@@ -6,6 +6,7 @@ import Page from '@/components/Pages/UserPage.vue';
 import Page2 from '@/components/Pages/UserPage2.vue';
 import Sidebar from '@/components/Bar/Sidebar.vue';
 import store from '@/store';
+import SettingPage from '@/components/Pages/SettingPage.vue';
 
 const routes = [
     {
@@ -40,6 +41,15 @@ const routes = [
         name: 'page2',
         components: {
             default: Page2,
+            sidebar: Sidebar
+        },
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/setting',
+        name: 'setting',
+        components: {
+            default: SettingPage,
             sidebar: Sidebar
         },
         meta: {requiresAuth: true}

@@ -1,8 +1,7 @@
 import {createStore} from 'vuex';
 
-import axios from 'axios';
+import base_url from '@/axios.js'
 import router from '@/router/router.js';
-
 const store = createStore({
     state() {
         return {
@@ -35,7 +34,8 @@ const store = createStore({
     },
     actions: {
         async login({commit}, credentials) {
-            await axios.post('http://localhost:8080/api/authorization/login', credentials).then(data => {
+            await base_url.post('/authorization/login', credentials).then(data => {
+                console.log(data)
                 commit('login', data.data);
             }).catch(error => {
                 commit('setError', error);
@@ -43,8 +43,9 @@ const store = createStore({
             });
         },
         async logout({commit}) {
-            await axios.post('http://localhost:8080/api/authorization/logout')
+            await base_url.post('/authorization/logout')
                 .then(data => {
+                    console.log(data)
                     commit('logout');
                     router.push('/authorization');
                 }).catch(error => {
@@ -52,13 +53,31 @@ const store = createStore({
                 });
         },
         async register({commit}, user) {
-            await axios.post('http://localhost:8080/api/register', user)
+            await base_url.post('/register', user)
                 .then(data => {
                     commit('login', data.data);
                 })
                 .catch(error => {
                     commit('setError', error);
                     throw error;
+                });
+        },
+        async getUser({commit}) {
+            await base_url.get('/setting/user')
+                .then(response => {
+                    commit('setUser', response.data);
+                })
+                .catch(error => {
+                    commit('setError', error);
+                });
+        },
+        async updateUser({commit}, updatedUser) {
+            await base_url.put('/setting/user', updatedUser)
+                .then(response => {
+                    commit('setUser', response.data);
+                })
+                .catch(error => {
+                    commit('setError', error);
                 });
         }
     },

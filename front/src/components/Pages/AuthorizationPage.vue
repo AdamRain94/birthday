@@ -85,7 +85,7 @@ export default {
 
 .window {
     width: 300px;
-    height: 270px;
+    min-height: 273px;
     transform: translateY(-17%);
     margin: auto auto;
 }
@@ -128,9 +128,10 @@ export default {
 .message {
     text-align: center;
     top: 55px;
-    min-height: 20px;
+    min-height: 25px;
     cursor: default;
-    font-size: 0.8em;
+    font-size: 0.9em;
+    padding-bottom: 10px;
     color: var(--4-color);
 }
 
