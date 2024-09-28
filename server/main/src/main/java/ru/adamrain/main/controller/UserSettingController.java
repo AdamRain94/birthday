@@ -1,9 +1,9 @@
-package ru.adamrain.main.controllers;
+package ru.adamrain.main.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.adamrain.main.services.UserService;
+import ru.adamrain.main.service.UserService;
 
 @RestController
 @RequestMapping("/api/setting")

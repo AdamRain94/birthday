@@ -1,0 +1,28 @@
+version: '1'
+services:
+  postgres:
+    image: postgres:11
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=birth_day
+  redis:
+    image: redis:latest
+    ports:
+      - "6380:6379"
+#  spring-app:
+#    image: my-spring-app # Либо билд через Dockerfile
+#    build: .
+#    ports:
+#      - "8080:8080"  # Укажите порт, на котором работает Spring-приложение
+#    depends_on:
+#      - postgres
+#      - redis
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/birth_day
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=postgres
+#      - SPRING_REDIS_HOST=redis
+#      - SPRING_REDIS_PORT=6379
