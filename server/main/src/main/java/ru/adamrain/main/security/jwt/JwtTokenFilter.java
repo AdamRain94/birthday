@@ -36,7 +36,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             // Получаем токен из заголовков запроса.
             String jwtToken = getToken(request);
-
+            System.out.println("Токен " + jwtToken);
             // Если токен существует и является валидным, выполняем аутентификацию пользователя.
             if(jwtToken != null && jwtUtils.validate(jwtToken)){
                 // Извлекаем телефон пользователя из токена.

@@ -82,6 +82,7 @@ public class SecurityConfiguration {
         // Определяем разрешённые заголовки.
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
 
+        configuration.setAllowCredentials(true);
         // Настраиваем источник конфигурации CORS.
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Разрешаем CORS для всех путей.
@@ -96,9 +97,8 @@ public class SecurityConfiguration {
                 // Включаем поддержку CORS по умолчанию.
 
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1/app/**").permitAll())
-                // Разрешаем доступ ко всем запросам, начиная с "/api/v1/app/**", без аутентификации.
-
+                        .requestMatchers("/api/auth/**").permitAll() // Разрешаем доступ ко всем запросам, начиная с "/api/v1/app/**", без аутентификации.
+                        .anyRequest().authenticated()) // остальные запросы только для авторизированных пользователей
                 .exceptionHandling(configurer ->
                         configurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 // Устанавливаем обработчик ошибок аутентификации (в случае неправильного или отсутствующего токена).

@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 import ru.adamrain.main.entity.RefreshToken;
 import ru.adamrain.main.entity.User;
 import ru.adamrain.main.exception.RefreshTokenException;
+import ru.adamrain.main.exception.UserTelNotFoundExcepion;
 import ru.adamrain.main.repository.UserRepository;
 import ru.adamrain.main.security.jwt.JwtUtils;
 import ru.adamrain.main.service.RefreshTokenService;
 import ru.adamrain.main.web.model.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,27 +37,26 @@ public class SecurityService {
                 loginRequest.getTel(), // Получаем телефон пользователя.
                 loginRequest.getPassword() // Получаем пароль пользователя.
         ));
-
         // Установка аутентификации в контекст безопасности.
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        AppUserDetails userDetails = (AppUserDetails) authentication.getPrincipal(); // Получаем детали пользователя.
-
-        // Получаем роли пользователя и преобразуем их в список строк.
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-
+        // Получаем детали пользователя.
+        AppUserDetails userDetails = (AppUserDetails) authentication.getPrincipal();
         // Создаем новый refresh токен для пользователя.
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-
+        System.out.println(refreshToken);
+        User user = userRepository.findByTel(userDetails.getUsername())
+                .orElseThrow(() -> new UserTelNotFoundExcepion("User not found by tel number" + userDetails.getUsername()));
         // Возвращаем объект AuthResponse с данными аутентификации.
         return AuthResponse.builder()
-                .id(userDetails.getId())
+                .id(user.getId())
+                .fam(user.getFam())
+                .name(user.getName())
+                .otch(user.getOtch())
+                .dateOfBirth(user.getDateOfBirth())
+                .dateRegistration(user.getDateRegistration())
+                .tel(user.getTel()) // Добавляем телефон пользователя.
                 .token(jwtUtils.generateJwtToken(userDetails)) // Генерируем JWT токен.
                 .refreshToken(refreshToken.getToken()) // Добавляем refresh токен в ответ.
-                .tel(userDetails.getUsername()) // Добавляем телефон пользователя.
-                .roles(roles) // Добавляем роли пользователя.
                 .build();
     }
 
@@ -72,6 +73,7 @@ public class SecurityService {
     }
 
     public RefreshTokenResponse refreshTokenResponse(RefreshTokenRequest refreshTokenRequest) {
+        System.out.println("Новый refreshToken сгенерирован");
         // Получаем refresh токен из запроса.
         String refreshToken = refreshTokenRequest.getRefreshToken();
 

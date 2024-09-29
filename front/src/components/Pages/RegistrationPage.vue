@@ -62,7 +62,7 @@ export default {
                     this.$router.push('/page');
                 })
                 .catch((error) => {
-                    this.message = error.response.data;
+                    this.message = error.response.data.message;
                 })
                 .finally(() => {
                     this.isLoading = false;

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -15,7 +16,11 @@ public class AuthResponse {
 
     private Long id;
     private String token;
-    private String refreshToken;
+    private String name;
+    private String fam;
+    private String otch;
     private String tel;
-    private List<String> roles;
+    private String refreshToken;
+    private Date dateOfBirth;
+    private Date dateRegistration;
 }

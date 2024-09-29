@@ -10,6 +10,7 @@ import ru.adamrain.main.repository.RefreshTokenRepository; // Импорт ре�
 import java.time.Duration;
 import java.time.Instant; // Импорт для работы с временем.
 import java.util.Optional; // Импорт для использования Optional.
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .userId(userId)
                 .expiryDate(Instant.now().plusMillis(refreshTokenExpiration.toMillis())) // Устанавливаем время истечения.
+                .token(UUID.randomUUID().toString())
                 .build();
 
         refreshToken = refreshTokenRepository.save(refreshToken); // Сохраняем токен в репозитории.

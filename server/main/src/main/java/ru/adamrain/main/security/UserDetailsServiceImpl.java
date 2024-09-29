@@ -20,8 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String tel) throws UsernameNotFoundException {
         // Находим пользователя по номеру телефона, если не найден, выбрасываем исключение.
         User user = userRepository.findByTel(tel).orElseThrow(() ->
-                new UserTelNotFoundExcepion("User not found. Tel is: " + tel)); // Создаем исключение с сообщением о том, что пользователь не найден.
-
+                new UserTelNotFoundExcepion("Пользователь не найдет!")); // Создаем исключение с сообщением о том, что пользователь не найден.
         return new AppUserDetails(user); // Возвращаем объект AppUserDetails с данными пользователя.
     }
 }
