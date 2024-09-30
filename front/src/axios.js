@@ -15,9 +15,16 @@ function addSubscriber(callback) {
 
 const apiClient = axios.create({
     baseURL: 'http://localhost:8080/api',
-    headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+});
+
+apiClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('accessToken'); // Берём актуальный токен из localStorage
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
     }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
 });
 
 apiClient.interceptors.response.use(
@@ -26,7 +33,6 @@ apiClient.interceptors.response.use(
     },
     async (error) => {
         const originalRequest = error.config;
-
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
                 return new Promise((resolve) => {
@@ -43,10 +49,8 @@ apiClient.interceptors.response.use(
             try {
                 await store.dispatch('refreshToken'); // Запрашиваем новый токен через Vuex
                 const newAccessToken = store.getters.accessToken; // Получаем новый токен из Vuex
-
                 // Обновляем токен в запросе
                 originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
-
                 onAccessTokenFetched(newAccessToken);
 
                 return apiClient(originalRequest); // Повторяем запрос

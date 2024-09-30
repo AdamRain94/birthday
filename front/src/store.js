@@ -14,9 +14,6 @@ const store = createStore({
     },
     mutations: {
         login(state, { user, accessToken, refreshToken }) {
-            console.log(user)
-            console.log(accessToken)
-            console.log(refreshToken)
             state.isAuthenticated = true;
             state.user = user;
             state.accessToken = accessToken;
@@ -37,6 +34,7 @@ const store = createStore({
         updateTokens(state, { accessToken, refreshToken }) {
             state.accessToken = accessToken;
             state.refreshToken = refreshToken;
+            localStorage.removeItem('accessToken');
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
         },
@@ -69,7 +67,7 @@ const store = createStore({
                     throw error;
                 });
         },
-        async logout({ commit }) {
+        async   logout({ commit }) {
             await base_url.post('/auth/logout')
                 .then(() => {
                     commit('logout');
@@ -89,7 +87,16 @@ const store = createStore({
                     commit('setError', error);
                     throw error;
                 });
-        }
+        },
+        async getUser({ commit }) {
+            await base_url.get('/setting/user')
+                .then((data) => {
+                    console.log(data)
+                })
+                .catch(error => {
+                    commit('setError', error);
+                });
+        },
     },
     getters: {
         isAuthenticated(state) {

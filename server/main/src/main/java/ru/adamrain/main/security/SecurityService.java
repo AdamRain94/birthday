@@ -1,15 +1,19 @@
 package ru.adamrain.main.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.adamrain.main.entity.RefreshToken;
+import ru.adamrain.main.entity.RoleType;
 import ru.adamrain.main.entity.User;
+import ru.adamrain.main.exception.AlreadyExistException;
 import ru.adamrain.main.exception.RefreshTokenException;
 import ru.adamrain.main.exception.UserTelNotFoundExcepion;
 import ru.adamrain.main.repository.UserRepository;
@@ -17,6 +21,7 @@ import ru.adamrain.main.security.jwt.JwtUtils;
 import ru.adamrain.main.service.RefreshTokenService;
 import ru.adamrain.main.web.model.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +36,14 @@ public class SecurityService {
     private final UserRepository userRepository; // Репозиторий для работы с пользователями.
     private final PasswordEncoder passwordEncoder; // Кодировщик паролей.
 
-    public AuthResponse authenticateUser(LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
+        User user = userRepository.findByTel(loginRequest.getTel()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body("Пользователь не найден!");
+        }
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(400).body("Неверный пароль!");
+        }
         // Аутентификация пользователя с помощью предоставленных учетных данных.
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequest.getTel(), // Получаем телефон пользователя.
@@ -43,11 +55,8 @@ public class SecurityService {
         AppUserDetails userDetails = (AppUserDetails) authentication.getPrincipal();
         // Создаем новый refresh токен для пользователя.
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-        System.out.println(refreshToken);
-        User user = userRepository.findByTel(userDetails.getUsername())
-                .orElseThrow(() -> new UserTelNotFoundExcepion("User not found by tel number" + userDetails.getUsername()));
         // Возвращаем объект AuthResponse с данными аутентификации.
-        return AuthResponse.builder()
+        return ResponseEntity.ok().body(AuthResponse.builder()
                 .id(user.getId())
                 .fam(user.getFam())
                 .name(user.getName())
@@ -57,10 +66,16 @@ public class SecurityService {
                 .tel(user.getTel()) // Добавляем телефон пользователя.
                 .token(jwtUtils.generateJwtToken(userDetails)) // Генерируем JWT токен.
                 .refreshToken(refreshToken.getToken()) // Добавляем refresh токен в ответ.
-                .build();
+                .build());
     }
 
-    public void register(CreateUserRequest createUserRequest) {
+    public ResponseEntity<?> register(CreateUserRequest createUserRequest) {
+        // Проверяем, существует ли уже пользователь с таким номером телефона
+        if (userRepository.existsByTel(createUserRequest.getTel())) {
+            return ResponseEntity.status(400).body("Данный номер уже зарегистрирован!");
+        }
+        // проставляем по умолчанию роль юзера
+        createUserRequest.setRoles(Collections.singleton(RoleType.ROLE_USER));
         // Создание нового пользователя и сохранение его в базе данных.
         User user = User.builder()
                 .tel(createUserRequest.getTel()) // Устанавливаем телефон.
@@ -68,36 +83,44 @@ public class SecurityService {
                 .password(passwordEncoder.encode(createUserRequest.getPassword())) // Кодируем пароль перед сохранением.
                 .roles(createUserRequest.getRoles()) // Устанавливаем роли.
                 .build();
-
         userRepository.save(user); // Сохраняем пользователя в базе данных.
+        // Авторизация нового пользователя
+        LoginRequest login = new LoginRequest(user.getTel(), user.getPassword());
+        return authenticateUser(login);
     }
 
-    public RefreshTokenResponse refreshTokenResponse(RefreshTokenRequest refreshTokenRequest) {
-        System.out.println("Новый refreshToken сгенерирован");
+    public ResponseEntity<?> refreshTokenResponse(RefreshTokenRequest refreshTokenRequest) {
         // Получаем refresh токен из запроса.
-        String refreshToken = refreshTokenRequest.getRefreshToken();
+        RefreshToken refreshToken = refreshTokenService.findByRefreshToken(refreshTokenRequest.getRefreshToken()).orElse(null);
+        if (refreshToken != null) {
+            Long userId = refreshTokenService.findByRefreshToken(refreshToken.getToken())
+                    .map(refreshTokenService::checkRefreshToken) // Проверяем действительность refresh токена.
+                    .map(RefreshToken::getUserId).orElse(null);
+            if (userId != null) {
+                User user = userRepository.findById(userId).orElse(null);
+                if (user != null) {
+                    String token = jwtUtils.generateTokenFromUserTel(user.getTel());
+                    return ResponseEntity.status(200).body(new RefreshTokenResponse(token, refreshTokenService.createRefreshToken(userId).getToken()));
+                } else {
+                    return ResponseEntity.status(404).body("Пользователь не найден!");
+                }
+            }
 
-        return refreshTokenService.findByRefreshToken(refreshToken) // Находим refresh токен в базе данных.
-                .map(refreshTokenService::checkRefreshToken) // Проверяем действительность refresh токена.
-                .map(RefreshToken::getUserId) // Получаем ID пользователя, которому принадлежит токен.
-                .map(userId -> {
-                    User tokenOwner = userRepository.findById(userId).orElseThrow(() ->
-                            new RefreshTokenException("Exeption trying to get token for userId: " + userId)); // Получаем пользователя по ID.
-
-                    // Генерируем новый JWT токен для пользователя.
-                    String token = jwtUtils.generateTokenFromUserTel(tokenOwner.getTel());
-
-                    // Возвращаем новый токен и refresh токен в ответе.
-                    return new RefreshTokenResponse(token, refreshTokenService.createRefreshToken(userId).getToken());
-                }).orElseThrow(() -> new RefreshTokenException(refreshToken, "RefreshToken not found")); // Если refresh токен не найден, выбрасываем исключение.
+        }
+        return ResponseEntity.status(404).body("RefreshToken не найден");
     }
 
-    public void logout() {
-        // Метод для выхода пользователя, удаляющий его refresh токены.
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof AppUserDetails userDetails) {
-            Long userId = userDetails.getId(); // Получаем ID пользователя из контекста.
-            refreshTokenService.deleteByUserId(userId); // Удаляем все refresh токены, связанные с пользователем.
+    public ResponseEntity<SimpleResponse> logout(UserDetails userDetails) {
+        if (userDetails != null) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof AppUserDetails appUserDetails) {
+                Long userId = appUserDetails.getId(); // Получаем ID пользователя из контекста.
+                refreshTokenService.deleteByUserId(userId); // Удаляем все refresh токены, связанные с пользователем.
+            }
+            SecurityContextHolder.clearContext();
+            return ResponseEntity.ok(new SimpleResponse("Пользователь успешно вышел."));
         }
+        return ResponseEntity.ok(new SimpleResponse("Пользователь не найден, но выход всё равно совершен"));
+
     }
 }
