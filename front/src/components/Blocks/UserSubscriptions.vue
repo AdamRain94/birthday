@@ -65,6 +65,6 @@ export default {
 .user .photo {
     width: 40px;
     aspect-ratio: 1 / 1;
-    border-radius: 50%;
+    border-radius: 6px;
 }
 </style>

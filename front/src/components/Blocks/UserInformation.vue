@@ -1,5 +1,5 @@
 <script>
-import img from '@/assets/images/photo_2024-02-27_18-38-46.jpg';
+import img from '@/assets/images/0b2jq30sQEc.jpg';
 import {mapGetters} from 'vuex';
 import moment from 'moment';
 
@@ -62,9 +62,9 @@ export default {
 
 .photo {
     aspect-ratio: 1 / 1;
-    width: 230px;
+    width: 300px;
     margin-right: 20px;
-    border-radius: 50%;
+    border-radius: 6px;
     object-fit: cover;
     overflow: hidden;
 }

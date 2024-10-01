@@ -1,4 +1,4 @@
-import { createStore } from 'vuex';
+import {createStore} from 'vuex';
 import base_url from '@/axios.js';
 import router from '@/router/router.js';
 
@@ -13,7 +13,7 @@ const store = createStore({
         };
     },
     mutations: {
-        login(state, { user, accessToken, refreshToken }) {
+        login(state, {user, accessToken, refreshToken}) {
             state.isAuthenticated = true;
             state.user = user;
             state.accessToken = accessToken;
@@ -31,7 +31,7 @@ const store = createStore({
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
         },
-        updateTokens(state, { accessToken, refreshToken }) {
+        updateTokens(state, {accessToken, refreshToken}) {
             state.accessToken = accessToken;
             state.refreshToken = refreshToken;
             localStorage.removeItem('accessToken');
@@ -47,27 +47,27 @@ const store = createStore({
         }
     },
     actions: {
-        async login({ commit }, credentials) {
+        async login({commit}, credentials) {
             await base_url.post('/auth/login', credentials)
-                .then(({ data }) => {
-                    commit('login', { user: data, accessToken: data.token, refreshToken: data.refreshToken });
+                .then(({data}) => {
+                    commit('login', {user: data, accessToken: data.token, refreshToken: data.refreshToken});
                 })
                 .catch(error => {
                     commit('setError', error);
                     throw error;
                 });
         },
-        async register({ commit }, user) {
+        async register({commit}, user) {
             await base_url.post('/auth/register', user)
-                .then(({ data }) => {
-                    commit('login', { user: data, accessToken: data.token, refreshToken: data.refreshToken });
+                .then(({data}) => {
+                    commit('login', {user: data, accessToken: data.token, refreshToken: data.refreshToken});
                 })
                 .catch(error => {
                     commit('setError', error);
                     throw error;
                 });
         },
-        async   logout({ commit }) {
+        async logout({commit}) {
             await base_url.post('/auth/logout')
                 .then(() => {
                     commit('logout');
@@ -77,26 +77,41 @@ const store = createStore({
                     commit('setError', error);
                 });
         },
-        async refreshToken({ commit, state }) {
+        async refreshToken({commit, state}) {
             const refreshToken = state.refreshToken;
-            await base_url.post('/auth/refresh-token', { refreshToken })
-                .then(({ data }) => {
-                    commit('updateTokens', { accessToken: data.accessToken, refreshToken: data.refreshToken });
+            await base_url.post('/auth/refresh-token', {refreshToken})
+                .then(({data}) => {
+                    commit('updateTokens', {accessToken: data.accessToken, refreshToken: data.refreshToken});
                 })
                 .catch(error => {
                     commit('setError', error);
                     throw error;
                 });
         },
-        async getUser({ commit }) {
+        async getUser({commit}) {
             await base_url.get('/setting/user')
                 .then((data) => {
-                    console.log(data)
+                    console.log(data);
+                    commit('setUser', data.data);
                 })
                 .catch(error => {
                     commit('setError', error);
                 });
         },
+        async updateUser({commit, state}) {
+            try {
+                await base_url.post('/setting/user', state.user)
+                    .then((data) => {
+                        console.log(data)
+                        commit('setUser', data.data);
+                    })
+                    .catch(error => {
+                        commit('setError', error);
+                    });
+            } catch (error) {
+                console.error('Ошибка при обновлении данных пользователя:', error);
+            }
+        }
     },
     getters: {
         isAuthenticated(state) {

@@ -7,6 +7,9 @@ import Page2 from '@/components/Pages/UserPage2.vue';
 import Sidebar from '@/components/Bar/Sidebar.vue';
 import store from '@/store';
 import SettingPage from '@/components/Pages/SettingPage.vue';
+import SidebarInSetting from '@/components/Bar/SidebarInSetting.vue';
+import LichnayaInformation2 from '@/components/Blocks/LichnayaInformation2.vue';
+import PersonalInformation from '@/components/Blocks/PersonalInformation.vue';
 
 const routes = [
     {
@@ -52,6 +55,22 @@ const routes = [
             default: SettingPage,
             sidebar: Sidebar
         },
+        children: [
+            {
+                path: 'me',
+                components: {
+                    default: PersonalInformation,
+                    sidebarInSetting: SidebarInSetting
+                }
+            },
+            {
+                path: 'me2',
+                components: {
+                    default: LichnayaInformation2,
+                    sidebarInSetting: SidebarInSetting
+                }
+            }
+        ],
         meta: {requiresAuth: true}
     }
 ];
