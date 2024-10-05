@@ -1,18 +1,28 @@
 <script>
-import img from '@/assets/images/0b2jq30sQEc.jpg';
 import {mapGetters} from 'vuex';
 import moment from 'moment';
+import img from '@/assets/images/default_photo_user.png';
+
 
 export default {
     data() {
         return {
-            photo: img
+            img: img
         };
     },
     computed: {
         ...mapGetters(['user']),
-        userInfo(){
-          return this.user || {};
+        ...mapGetters(['userPhoto']),
+        userInfo() {
+            return this.user || {};
+        },
+        photo() {
+            const img = new Image();
+            img.src = this.userPhoto;
+            img.onerror = () => {
+                this.$store.dispatch('getUserPhoto'); // Запрашиваем фото заново
+            };
+            return this.userPhoto;
         },
         dateOfBirth() {
             // Проверка, если дата рождения существует
@@ -21,25 +31,27 @@ export default {
                 : ''; // Можно указать другое сообщение или формат
         }
     }
+
 };
 </script>
 
 <template>
-    <div class="window" >
+    <div class="window">
         <div class="header">
             <div class="fio">{{ userInfo.fam }} {{ userInfo.name }} {{ userInfo.otch }}</div>
             <div class="online">последний раз в сети 15.09.24 15:16</div>
         </div>
         <div class="main">
-            <img class="photo" :src="photo" alt=""/>
+            <img v-if="photo" class="photo" :src="photo" alt="userPhoto"/>
+            <img v-if="!photo" class="photo" :src="img" alt="userPhoto"/>
             <div class="information">
                 <div class="info">
                     <div>День рождения:</div>
-                    <div>{{dateOfBirth}}</div>
+                    <div>{{ dateOfBirth }}</div>
                 </div>
                 <div class="info">
                     <div>Номер телефон</div>
-                    <div>{{userInfo.tel}}</div>
+                    <div>{{ userInfo.tel }}</div>
                 </div>
                 <div class="info">
                     <div>Место учёбы:</div>

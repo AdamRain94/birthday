@@ -9,6 +9,8 @@ const store = createStore({
             user: JSON.parse(localStorage.getItem('user')) || null,
             accessToken: localStorage.getItem('accessToken') || null,
             refreshToken: localStorage.getItem('refreshToken') || null,
+            userPhoto: null,
+            newUserPhoto: null,
             error: null
         };
     },
@@ -25,11 +27,14 @@ const store = createStore({
         logout(state) {
             state.isAuthenticated = false;
             state.user = null;
+            state.userPhoto = null;
+            state.newUserPhoto = null;
             state.accessToken = null;
             state.refreshToken = null;
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
+            localStorage.removeItem('userPhoto');
         },
         updateTokens(state, {accessToken, refreshToken}) {
             state.accessToken = accessToken;
@@ -44,10 +49,16 @@ const store = createStore({
         setUser(state, user) {
             state.user = user;
             localStorage.setItem('user', JSON.stringify(user));
+        },
+        setUserPhoto(state, photo) {
+            state.userPhoto = photo;
+        },
+        setNewUserPhoto(state, photo) {
+            state.newUserPhoto = photo;
         }
     },
     actions: {
-        async login({commit}, credentials) {
+        async login({commit, dispatch}, credentials) {
             await base_url.post('/auth/login', credentials)
                 .then(({data}) => {
                     commit('login', {user: data, accessToken: data.token, refreshToken: data.refreshToken});
@@ -91,7 +102,6 @@ const store = createStore({
         async getUser({commit}) {
             await base_url.get('/setting/user')
                 .then((data) => {
-                    console.log(data);
                     commit('setUser', data.data);
                 })
                 .catch(error => {
@@ -99,17 +109,38 @@ const store = createStore({
                 });
         },
         async updateUser({commit, state}) {
-            try {
-                await base_url.post('/setting/user', state.user)
-                    .then((data) => {
-                        console.log(data)
-                        commit('setUser', data.data);
-                    })
-                    .catch(error => {
-                        commit('setError', error);
-                    });
-            } catch (error) {
-                console.error('Ошибка при обновлении данных пользователя:', error);
+            await base_url.post('/setting/user', state.user)
+                .then((data) => {
+                    commit('setUser', data.data);
+                })
+                .catch(error => {
+                    commit('setError', error);
+                });
+
+        },
+        async getUserPhoto({commit}) {
+            await base_url.get('/setting/photo', {
+                responseType: 'blob'
+            }).then((data) => {
+                if (data.data.size) {
+                    const url = URL.createObjectURL(data.data);
+                    commit('setUserPhoto', url);
+                }
+            }).catch(error => {
+                commit('setError', error);
+            });
+        },
+        async updateUserPhoto({commit, state}) {
+            if (state.newUserPhoto != null) {
+                const formData = new FormData();
+                formData.append('photo', state.newUserPhoto);
+                await base_url.post('/setting/photo', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).catch(error => {
+                    commit('setError', error);
+                });
             }
         }
     },
@@ -128,6 +159,9 @@ const store = createStore({
         },
         refreshToken(state) {
             return state.refreshToken;
+        },
+        userPhoto(state) {
+            return state.userPhoto;
         }
     }
 });

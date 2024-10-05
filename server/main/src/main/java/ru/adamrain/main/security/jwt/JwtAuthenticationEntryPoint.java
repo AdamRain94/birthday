@@ -1,6 +1,7 @@
 package ru.adamrain.main.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,14 +33,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         // Устанавливаем HTTP статус ответа как 401 Unauthorized.
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
+        Gson gson = new Gson();
         // Создаем тело ответа в виде Map для отправки JSON ответа клиенту.
         final Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED); // Статус ошибки
         body.put("error", "Unauthorized"); // Тип ошибки
         body.put("message", authException.getMessage()); // Сообщение об ошибке
         body.put("path", request.getServletPath()); // Путь, по которому произошла ошибка
-
         // Записываем JSON-ответ в OutputStream.
         objectMapper.writeValue(response.getOutputStream(), body);
     }

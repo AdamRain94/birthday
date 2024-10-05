@@ -1,13 +1,36 @@
 <script>
+import {mapGetters} from 'vuex';
+import img from '@/assets/images/default_photo_user.png';
 export default {
+    data() {
+        return {
+            img: img
+        };
+    },
     computed: {
-        user() {
-            return this.$store.state.user || {};
-        }
+        ...mapGetters(['user']),
+        ...mapGetters(['userPhoto']),
+        photo() {
+            const img = new Image();
+            img.src = this.userPhoto;
+            img.onerror = () => {
+                this.$store.dispatch('getUserPhoto') // Запрашиваем фото заново
+            };
+            return this.userPhoto;
+        },
     },
     mounted() {
         this.$store.dispatch('getUser');
     },
+    methods: {
+        onImageChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                this.$store.commit('setUserPhoto', URL.createObjectURL(file));
+                this.$store.commit('setNewUserPhoto', file);
+            }
+        }
+    }
 };
 </script>
 
@@ -18,6 +41,16 @@ export default {
                 Личная ифнормация
             </div>
             <div class="main">
+                <div>
+                </div>
+                <div class="file-input-wrapper">
+                    <img v-if="photo" class="user_photo" :src="photo" alt="user-photo"/>
+                    <img v-if="!photo" class="user_photo" :src="img" alt="user-photo"/>
+                    <input type="file" @change="onImageChange" accept="image/*" class="file-input" id="file-input"/>
+                    <label for="file-input" class="btn">
+                        Выбрать фото
+                    </label>
+                </div>
                 <div class="input-block">
                     <div class="title">Фамилия</div>
                     <input v-model="user.fam" class="value" placeholder="Фамилия">
@@ -42,17 +75,43 @@ export default {
                     <div class="title">Пароль</div>
                     <input v-model="user.password" class="value" placeholder="Пароль">
                 </div>
-                <!--                <button class="btn mt-2">Сохранить</button>-->
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+
+/* Контейнер для обёртки элемента input */
+.file-input-wrapper {
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Скрываем стандартный input */
+.file-input {
+    display: none;
+}
+
+.btn {
+    text-align: center;
+}
+
 .main {
     display: flex;
     flex-direction: column;
     padding: 20px;
+}
+
+.user_photo {
+    aspect-ratio: 1 / 1;
+    width: 150px;
+    border-radius: 6px;
+    object-fit: cover;
+    overflow: hidden;
 }
 
 .input-block {
@@ -69,9 +128,6 @@ export default {
 .input-block .value {
     width: 230px;
     margin: 0;
-}
-
-.btn {
 }
 
 

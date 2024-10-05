@@ -85,7 +85,7 @@ public class SecurityService {
                 .build();
         userRepository.save(user); // Сохраняем пользователя в базе данных.
         // Авторизация нового пользователя
-        LoginRequest login = new LoginRequest(user.getTel(), user.getPassword());
+        LoginRequest login = new LoginRequest(createUserRequest.getTel(), createUserRequest.getPassword());
         return authenticateUser(login);
     }
 

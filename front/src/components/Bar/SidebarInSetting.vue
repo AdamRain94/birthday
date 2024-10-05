@@ -9,9 +9,14 @@ export default {
     },
     methods: {
         ...mapActions(['updateUser']),
+        ...mapActions(['updateUserPhoto']),
         save() {
             this.isLoading = true;
             this.updateUser().then(() => {
+            }).catch((error) => {
+                console.log(error)
+            })
+            this.updateUserPhoto().then(() => {
             }).catch((error) => {
                 console.log(error)
             }).finally(() => {

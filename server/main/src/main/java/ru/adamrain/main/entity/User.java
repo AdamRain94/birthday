@@ -1,5 +1,6 @@
 package ru.adamrain.main.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
@@ -42,9 +43,14 @@ public class User {
 
     private Date dateRegistration;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ElementCollection(targetClass = RoleType.class, fetch = FetchType.EAGER)  //FetchType.EAGER указывает, что связанные данные должны загружаться немедленно, когда загружается основной объект.
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name="roles", nullable = false)
     @Builder.Default
     private Set<RoleType> roles = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private UserPhoto photo;
 }

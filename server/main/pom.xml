@@ -92,6 +92,11 @@
             <artifactId>jedis</artifactId>
             <version>5.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.14</version>
+        </dependency>
     </dependencies>
 
     <build>
