@@ -10,7 +10,7 @@ export default {
 </script>
 
 <template>
-    <div class="window">
+    <div class="window mb-2">
         <div class="header">Подписки</div>
         <div class="main">
             <div class="user">

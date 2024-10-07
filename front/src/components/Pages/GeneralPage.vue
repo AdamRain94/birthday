@@ -1,3 +1,10 @@
+<template>
+    <div class="general">
+        <Header class="header"/>
+        <Main class="main"/>
+    </div>
+</template>
+
 <script>
 import {defineComponent} from 'vue';
 import Header from '@/components/Sections/Header.vue';
@@ -8,13 +15,6 @@ export default defineComponent({
     components: {Footer, Main, Header}
 });
 </script>
-
-<template>
-    <div class="general">
-        <Header class="header"/>
-        <Main class="main"/>
-    </div>
-</template>
 
 <style scoped>
 
@@ -30,9 +30,8 @@ export default defineComponent({
 
 .header {
     position: sticky;
-    min-width: 960px;
+    height: 60px;
     top: 0;
-    padding: 30px;
     border-bottom: 1px solid var(--2-color50);
     background: var(--1-color);
 }

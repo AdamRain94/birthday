@@ -1,17 +1,3 @@
-<script>
-import UserInformation from "@/components/Blocks/UserInformation.vue";
-import UserDesires from "@/components/Blocks/UserDesires.vue";
-import UserSubscriptions from "@/components/Blocks/UserSubscriptions.vue";
-import {mapGetters} from 'vuex';
-
-export default {
-    components: {UserDesires, UserInformation,UserSubscriptions},
-    computed: {
-        ...mapGetters(['user']),
-    }
-};
-</script>
-
 <template>
     <div class="container" v-if="user">
         <UserInformation class="mb-2"/>
@@ -25,6 +11,23 @@ export default {
         </div>
     </div>
 </template>
+
+<script>
+import UserInformation from '@/components/Blocks/UserInformation.vue';
+import UserDesires from '@/components/Blocks/UserDesires.vue';
+import UserSubscriptions from '@/components/Blocks/UserSubscriptions.vue';
+import {mapGetters} from 'vuex';
+
+export default {
+    components: {UserDesires, UserInformation, UserSubscriptions},
+    computed: {
+        ...mapGetters('user', ['user']),
+    },
+    mounted() {
+        document.title = this.user.name + ' ' + this.user.fam;
+    }
+};
+</script>
 
 <style scoped>
 

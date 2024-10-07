@@ -9,12 +9,12 @@
                     <div @click="registration" class="registration">Регистрация →</div>
                     <input v-model="tel" maxlength="18" placeholder="Номер телефона" @input="filterTel"/>
                     <input v-model="password" maxlength="20" placeholder="Пароль" type="password"/>
-                    <div class="message" >{{ message }}</div>
+                    <div class="message" >{{ error }}</div>
                 </div>
                 <div class="buttons">
-                    <button :disabled="isDisabled || isLoading" @click="enter" class="btn"
-                            :class="{ loading : isLoading}">
-                        <span v-if="isLoading">Загрузка...</span>
+                    <button :disabled="isDisabled || loading" @click="enter" class="btn"
+                            :class="{ loading : loading}">
+                        <span v-if="loading">Загрузка...</span>
                         <span v-else>Войти</span>
                     </button>
                 </div>
@@ -25,32 +25,20 @@
 
 <script>
 import router from '@/router/router.js';
-import {mapActions} from 'vuex';
+import {mapActions, mapGetters, mapMutations} from 'vuex';
 
 export default {
     data() {
         return {
             tel: '',
             password: '',
-            message: '',
-            isLoading: false
         };
     },
     methods: {
-        ...mapActions(['login', 'logout']),
+        ...mapActions('auth',['login']),
+        ...mapMutations('error', ['setError']),
         enter() {
-            this.isLoading = true; // Начинаем загрузку
-            this.message = '';
             this.login({tel: this.tel, password: this.password})
-                .then(() => {
-                    this.$router.push('/page');
-                })
-                .catch((error) => {
-                    this.message = error.response.data;
-                })
-                .finally(() => {
-                    this.isLoading = false;
-                });
         },
         registration() {
             router.push('/registration');
@@ -63,6 +51,8 @@ export default {
         },
     },
     computed: {
+        ...mapGetters('error', ['loading']),
+        ...mapGetters('error', ['error']),
         isDisabled() {
             return !(
                 this.tel !== '' &&
@@ -70,7 +60,10 @@ export default {
             );
         }
     },
-    //+7-(918)-512-58-36
+    beforeRouteLeave(to, from, next) {
+        this.setError(null);
+        next();
+    }
 };
 </script>
 

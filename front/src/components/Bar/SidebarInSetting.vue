@@ -1,32 +1,3 @@
-<script>
-import {mapActions} from 'vuex';
-
-export default {
-    data() {
-        return {
-            isLoading: false
-        };
-    },
-    methods: {
-        ...mapActions(['updateUser']),
-        ...mapActions(['updateUserPhoto']),
-        save() {
-            this.isLoading = true;
-            this.updateUser().then(() => {
-            }).catch((error) => {
-                console.log(error)
-            })
-            this.updateUserPhoto().then(() => {
-            }).catch((error) => {
-                console.log(error)
-            }).finally(() => {
-                this.isLoading = false;
-            });
-        }
-    }
-};
-</script>
-
 <template>
     <div class="container">
         <div class="window">
@@ -36,19 +7,46 @@ export default {
                     Личная информация
                 </router-link>
                 <router-link class="li" to="/setting/me2">
-                    Личная информация2
+                    Какой-то ещё блок
+                </router-link>
+                <router-link class="li" to="/setting/me2">
+                    Какой-то ещё блок
+                </router-link>
+                <router-link class="li" to="/setting/me2">
+                    Какой-то ещё блок
                 </router-link>
             </div>
         </div>
         <div class="buttons">
-            <button :disabled="isLoading" @click="save" class="btn"
-                    :class="{ loading : isLoading}">
-                <span v-if="isLoading">Сохранение...</span>
+            <button :disabled="loading || disable" @click="save" class="btn"
+                    :class="{ loading : loading}">
+                <span v-if="loading">Сохранение...</span>
                 <span v-else>Сохранить</span>
             </button>
         </div>
+        <div class="message">{{ error }}</div>
     </div>
 </template>
+
+<script>
+import {mapActions, mapGetters} from 'vuex';
+
+export default {
+    computed: {
+        ...mapGetters('error',['disable']),
+        ...mapGetters('error', ['error']),
+        ...mapGetters('error', ['loading'])
+    },
+    methods: {
+        ...mapActions('user',['updateUser']),
+        ...mapActions('photo',['updateUserPhoto']),
+         save() {
+            this.updateUser(null);
+            this.updateUserPhoto(null)
+        }
+    }
+};
+</script>
 
 <style scoped>
 .main {
@@ -59,8 +57,29 @@ export default {
     margin-bottom: 20px;
 }
 
+.buttons {
+    padding-bottom: 5px;
+}
+
 .btn {
     border-radius: 10px;
+}
+
+.btn.loading {
+    background: linear-gradient(90deg, var(--2-color) 0%, var(--2-color20) 50%, var(--2-color) 100%);
+    background-size: 200% 100%;
+    animation: loadingAnimation 1.5s ease-in-out infinite;
+    color: var(--3-color);
+}
+
+.message {
+    text-align: center;
+    top: 55px;
+    min-height: 25px;
+    cursor: default;
+    font-size: 0.9em;
+    padding-bottom: 10px;
+    color: var(--4-color);
 }
 
 .li {
@@ -80,5 +99,14 @@ export default {
 
 .li:hover {
     background-color: var(--2-color50);
+}
+
+@keyframes loadingAnimation {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 </style>

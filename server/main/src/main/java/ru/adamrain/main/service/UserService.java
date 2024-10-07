@@ -3,6 +3,7 @@ package ru.adamrain.main.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.adamrain.main.entity.User;
@@ -19,6 +20,8 @@ public class UserService {
 
     private final FileService fileService;
 
+    private final PasswordEncoder passwordEncoder;
+
     public User getUser(UserDetails userDetails) {
         return userRepository.findByTel(userDetails.getUsername()).orElse(null);
     }
@@ -32,7 +35,7 @@ public class UserService {
         updateUser.setDateOfBirth(user.getDateOfBirth());
         updateUser.setTel(user.getTel());
         if (user.getPassword() != null && !user.getPassword().isEmpty())
-            updateUser.setPassword(user.getPassword());
+            updateUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(updateUser);
     }

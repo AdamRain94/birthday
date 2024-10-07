@@ -13,12 +13,12 @@
                            @input="checkPasswords"/>
                     <input v-model="password_2" maxlength="20" placeholder="Подтвердите пароль" type="password"
                            @input="checkPasswords"/>
-                    <div class="message">{{ message }}</div>
+                    <div class="message">{{ error }}</div>
                 </div>
                 <div class="buttons">
-                    <button :disabled="isDisabled || isLoading" @click="enter" class="btn"
-                            :class="{ loading : isLoading}">
-                        <span v-if="isLoading">Загрузка...</span>
+                    <button :disabled="isDisabled || loading" @click="enter" class="btn"
+                            :class="{ loading : loading}">
+                        <span v-if="loading">Загрузка...</span>
                         <span v-else>Зарегистрироваться</span>
                     </button>
                 </div>
@@ -29,7 +29,7 @@
 
 <script>
 import router from '@/router/router.js';
-import {mapActions, mapGetters} from 'vuex';
+import {mapActions, mapGetters, mapMutations} from 'vuex';
 
 export default {
     data() {
@@ -38,42 +38,28 @@ export default {
             tel: '',
             password: '',
             password_2: '',
-            message: '',
-            isLoading: false
         };
     },
     methods: {
-        ...mapActions(['register']),
+        ...mapActions('auth', ['register']),
+        ...mapMutations('error', ['setError', 'setDisable']),
         checkPasswords() {
-            this.message = '';
+            this.setError('');
             if (this.password_2 !== this.password) {
-                this.message = 'Пароли не совпадают!';
+                this.setError('Пароли не совпадают!');
             }
         },
-        async enter() {
-            this.isLoading = true;
-            this.message = '';
-            await this.register({
+        enter() {
+            this.register({
                 name: this.name,
                 tel: this.tel,
                 password: this.password
-            })
-                .then(() => {
-                    this.$router.push('/page');
-                })
-                .catch((error) => {
-                    this.message = error.response.data;
-                })
-                .finally(() => {
-                    this.isLoading = false;
-                });
-
+            });
         },
         authorization() {
             router.push('/authorization');
         },
         filterName() {
-            // Фильтруем только русские буквы
             const regex = /^[А-Яа-яЁё\s]*$/;
             if (!regex.test(this.name)) {
                 this.name = this.name.replace(/[^А-Яа-яЁё\s]/g, '');
@@ -84,10 +70,11 @@ export default {
             if (!regex.test(this.tel)) {
                 this.tel = this.tel.replace(/[^0-9()+-]/g, '');
             }
-        },
+        }
     },
     computed: {
-        ...mapGetters(['error']),
+        ...mapGetters('error', ['error']),
+        ...mapGetters('error', ['loading']),
         isDisabled() {
             return !(
                 this.name !== '' &&
@@ -97,6 +84,10 @@ export default {
                 this.password === this.password_2
             );
         }
+    },
+    beforeRouteLeave(to, from, next) {
+        this.setError(null);
+        next();
     }
 };
 </script>
@@ -131,13 +122,6 @@ export default {
 
 .buttons {
     width: 100%;
-}
-
-.title {
-    padding-bottom: 15px;
-    font-size: 1.2em;
-    text-align: center;
-    color: white;
 }
 
 .authorization {

@@ -5,7 +5,7 @@ import Registration from '@/components/Pages/RegistrationPage.vue';
 import Page from '@/components/Pages/UserPage.vue';
 import Page2 from '@/components/Pages/UserPage2.vue';
 import Sidebar from '@/components/Bar/Sidebar.vue';
-import store from '@/store';
+import store from '@/store/index.js';
 import SettingPage from '@/components/Pages/SettingPage.vue';
 import SidebarInSetting from '@/components/Bar/SidebarInSetting.vue';
 import LichnayaInformation2 from '@/components/Blocks/LichnayaInformation2.vue';
@@ -81,7 +81,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = store.getters.isAuthenticated;
+    const isAuthenticated = store.getters['auth/isAuthenticated'];
     // Проверка: если пользователь авторизован и пытается зайти на страницы авторизации или регистрации
     if (isAuthenticated && (to.path === '/authorization' || to.path === '/registration')) {
         next('/page'); // Перенаправляем на страницу для авторизованных пользователей (например, '/page')

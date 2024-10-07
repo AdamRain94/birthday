@@ -1,10 +1,15 @@
 package ru.adamrain.main.service;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,7 +47,27 @@ public class FileService {
         }
 
         try {
-            Files.copy(file.getInputStream(), filePath);
+            File tempFile = new File(filePath.toString());
+            file.transferTo(tempFile);
+            int orientation = getOrientation(tempFile);
+            BufferedImage resizedImage = Thumbnails.of(tempFile)
+                    .size(500, 500) // Размеры
+                    .crop(net.coobird.thumbnailator.geometry.Positions.CENTER) // Обрезка по центру
+                    .asBufferedImage();
+
+            if (orientation == 6) {
+                resizedImage = rotateImage(resizedImage, 90);
+            } else if (orientation == 3) {
+                resizedImage = rotateImage(resizedImage, 180);
+            } else if (orientation == 8) {
+                resizedImage = rotateImage(resizedImage, 270);
+            }
+
+            Thumbnails.of(resizedImage)
+                    .outputFormat("jpg")
+                    .size(500, 500)
+                    .toFile(tempFile);
+
         } catch (IOException e) {
             log.error("Не удалось сохранить файл! " + e.getMessage());
             return null;
@@ -51,4 +76,25 @@ public class FileService {
         return filePath.toString();
     }
 
+    private int getOrientation(File file) {
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(file);
+            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+                return directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return 1;
+    }
+
+    private BufferedImage rotateImage(BufferedImage image, int angle) {
+        BufferedImage rotatedImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+        java.awt.Graphics2D g2d = rotatedImage.createGraphics();
+        g2d.rotate(Math.toRadians(angle), (double) image.getWidth() / 2, (double) image.getHeight() / 2);
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+        return rotatedImage;
+    }
 }

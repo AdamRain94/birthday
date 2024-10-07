@@ -1,7 +1,3 @@
-<script>
-export default {};
-</script>
-
 <template>
     <div class="layout">
         <router-view class="layout-left pr-2" v-slot="{ Component }">
@@ -16,6 +12,14 @@ export default {};
         </router-view>
     </div>
 </template>
+
+<script>
+export default {
+    mounted() {
+        document.title = 'Настройки';
+    }
+};
+</script>
 
 <style scoped>
 

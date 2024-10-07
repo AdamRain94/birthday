@@ -1,40 +1,3 @@
-<script>
-import {mapGetters} from 'vuex';
-import moment from 'moment';
-import img from '@/assets/images/default_photo_user.png';
-
-
-export default {
-    data() {
-        return {
-            img: img
-        };
-    },
-    computed: {
-        ...mapGetters(['user']),
-        ...mapGetters(['userPhoto']),
-        userInfo() {
-            return this.user || {};
-        },
-        photo() {
-            const img = new Image();
-            img.src = this.userPhoto;
-            img.onerror = () => {
-                this.$store.dispatch('getUserPhoto'); // Запрашиваем фото заново
-            };
-            return this.userPhoto;
-        },
-        dateOfBirth() {
-            // Проверка, если дата рождения существует
-            return this.userInfo.dateOfBirth
-                ? moment(this.userInfo.dateOfBirth).format('DD.MM.YYYY')
-                : ''; // Можно указать другое сообщение или формат
-        }
-    }
-
-};
-</script>
-
 <template>
     <div class="window">
         <div class="header">
@@ -65,6 +28,46 @@ export default {
         </div>
     </div>
 </template>
+
+<script>
+import {mapActions, mapGetters, mapMutations} from 'vuex';
+import moment from 'moment';
+import img from '@/assets/images/default_photo_user.png';
+
+
+export default {
+    data() {
+        return {
+            img: img
+        };
+    },
+    methods:{
+        ...mapActions('photo', ['getUserPhoto'])
+    },
+    computed: {
+        ...mapGetters('user',['user']),
+        ...mapGetters('photo',['userPhoto']),
+        userInfo() {
+            return this.user || {};
+        },
+        photo() {
+            const img = new Image();
+            img.src = this.userPhoto;
+            img.onerror = () => {
+                this.getUserPhoto()
+            };
+            return this.userPhoto;
+        },
+        dateOfBirth() {
+            return this.userInfo.dateOfBirth
+                ? moment(this.userInfo.dateOfBirth).format('DD.MM.YYYY')
+                : '';
+        }
+    }
+
+};
+</script>
+
 
 <style scoped>
 

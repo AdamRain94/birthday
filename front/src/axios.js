@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from './store'; // Импортируйте store
+import store from '@/store/index.js'; // Импортируйте index
 
 let isRefreshing = false;
 let subscribers = [];
@@ -47,15 +47,15 @@ apiClient.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                await store.dispatch('refreshToken'); // Запрашиваем новый токен через Vuex
-                const newAccessToken = store.getters.accessToken; // Получаем новый токен из Vuex
+                await store.dispatch('auth/refreshToken'); // Запрашиваем новый токен через Vuex
+                const newAccessToken = store.getters['auth/accessToken']; // Получаем новый токен из Vuex
                 // Обновляем токен в запросе
                 originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
                 onAccessTokenFetched(newAccessToken);
 
                 return apiClient(originalRequest); // Повторяем запрос
             } catch (err) {
-                await store.dispatch('logout'); // В случае ошибки логаут
+                await store.dispatch('auth/exit'); // В случае ошибки логаут
                 return Promise.reject(err);
             } finally {
                 isRefreshing = false;

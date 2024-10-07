@@ -34,18 +34,14 @@ public class UserSettingController {
     @PostMapping("/user")
     @Transactional
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody User user) {
+        try {
+            Thread.sleep(1000);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
         User updateUser = userService.saveUser(userDetails, user);
         if(updateUser == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при сохранении данных!");
         return ResponseEntity.ok(updateUser);
-    }
-
-    @PostMapping("/photo")
-    public ResponseEntity<?> updatePhotoUser(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam("photo") MultipartFile photo){
-        User user = userService.savePhoto(userDetails, photo);
-        if(user == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при сохранении фото!");
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/photo")
@@ -62,4 +58,12 @@ public class UserSettingController {
                 .body(resource);
     }
 
+    @PostMapping("/photo")
+    public ResponseEntity<?> updatePhotoUser(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam("photo") MultipartFile photo){
+        User user = userService.savePhoto(userDetails, photo);
+        if(user == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при сохранении фото!");
+        return ResponseEntity.ok().build();
+    }
 }
