@@ -20,8 +20,7 @@
         <div class="buttons">
             <button :disabled="loading || disable" @click="save" class="btn"
                     :class="{ loading : loading}">
-                <span v-if="loading">Сохранение...</span>
-                <span v-else>Сохранить</span>
+                <span>Сохранить</span>
             </button>
         </div>
         <div class="message">{{ error }}</div>
@@ -41,8 +40,8 @@ export default {
         ...mapActions('user',['updateUser']),
         ...mapActions('photo',['updateUserPhoto']),
          save() {
-            this.updateUser(null);
-            this.updateUserPhoto(null)
+            this.updateUser();
+            this.updateUserPhoto()
         }
     }
 };

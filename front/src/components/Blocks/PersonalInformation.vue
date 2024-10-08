@@ -44,7 +44,7 @@
                 </div>
                 <div class="right_block">
                     <div class="file-input-wrapper">
-                        <img v-if="newUserPhoto" class="user_photo" :src="img" alt="user-photo"/>
+                        <img v-if="newUserPhoto || !photo" class="user_photo" :src="img" alt="user-photo"/>
                         <img v-if="photo && !newUserPhoto" class="user_photo" :src="photo" alt="user-photo"/>
                         <input type="file" @change="onImageChange" accept="image/*" class="file-input" id="file-input"/>
                         <label for="file-input" class="btn">
@@ -77,7 +77,7 @@ export default {
             const img = new Image();
             img.src = this.userPhoto;
             img.onerror = () => {
-                this.getUserPhoto();
+                this.getUserPhoto(null);
             };
             return this.userPhoto;
         },
@@ -97,7 +97,7 @@ export default {
     },
     mounted() {
         this.getUser(null);
-        this.getUserPhoto();
+        this.getUserPhoto(null);
     },
     methods: {
         ...mapMutations('user', ['setUser']),

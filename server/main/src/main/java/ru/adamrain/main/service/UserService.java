@@ -43,10 +43,11 @@ public class UserService {
     public User savePhoto(UserDetails userDetails, MultipartFile photo) {
         User user = userRepository.findByTel(userDetails.getUsername()).orElse(null);
         if (user == null) return null;
-        String phat = fileService.saveUserPhoto(photo);
+        String phat = fileService.saveUserPhoto(photo, user.getTel());
         if (phat == null) return null;
         UserPhoto userPhoto = user.getPhoto();
         if (userPhoto == null) userPhoto = new UserPhoto();
+        if(userPhoto.getPath() != null) fileService.deleteUserPhoto(userPhoto.getPath());
         userPhoto.setUser(user);
         userPhoto.setPath(phat);
         user.setPhoto(userPhoto);

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -25,8 +24,8 @@ public class FileService {
     @Value("${app.files.dir.images.user-photo}")
     private String userPhotoDir;
 
-    public String saveUserPhoto(MultipartFile file) {
-        return saveFile(file, userPhotoDir);
+    public String saveUserPhoto(MultipartFile file, String tel) {
+        return saveFile(file, userPhotoDir, tel);
     }
 
     public File getUserPhoto(String path) {
@@ -34,8 +33,8 @@ public class FileService {
         return file.exists() ? file : null;
     }
 
-    private String saveFile(MultipartFile file, String dir) {
-        String fileName = UUID.randomUUID() + "_" + Objects.requireNonNull(file.getOriginalFilename()).replaceAll("\\s+", "");
+    private String saveFile(MultipartFile file, String dir, String tel) {
+        String fileName = UUID.randomUUID() + "_" + tel + ".jpg";
         Path rootPath = Paths.get(System.getProperty("user.dir")).resolve(dir);
         Path filePath = rootPath.resolve(fileName);
 
@@ -52,6 +51,7 @@ public class FileService {
             int orientation = getOrientation(tempFile);
             BufferedImage resizedImage = Thumbnails.of(tempFile)
                     .size(500, 500) // Размеры
+                    .outputFormat("jpg")
                     .crop(net.coobird.thumbnailator.geometry.Positions.CENTER) // Обрезка по центру
                     .asBufferedImage();
 
@@ -64,7 +64,6 @@ public class FileService {
             }
 
             Thumbnails.of(resizedImage)
-                    .outputFormat("jpg")
                     .size(500, 500)
                     .toFile(tempFile);
 
@@ -96,5 +95,14 @@ public class FileService {
         g2d.drawImage(image, 0, 0, null);
         g2d.dispose();
         return rotatedImage;
+    }
+
+    public void deleteUserPhoto(String path) {
+        File file = new File(path);
+        boolean delete = false;
+        if (file.exists()) {
+            delete = file.delete();
+        }
+        log.info(delete ? "Файл \"" + path + "\" удалён" : "Не удалось удалить файл \"" + path+"\"");
     }
 }
