@@ -1,0 +1,59 @@
+.vs__dropdown-toggle {
+  border: none;
+  cursor: pointer !important;
+  background-color: var(--2-color20);
+}
+
+.vs__dropdown-menu {
+  cursor: pointer;
+  min-width: 0;
+  max-height: 140px;
+  background-color: var(--1-color);
+}
+
+.vs__dropdown-option {
+  min-width: 0;
+}
+
+.vs__dropdown-option:hover {
+  background-color: var(--2-color20);
+}
+
+.vs__dropdown-option--selected {
+  background-color: var(--2-color50);
+}
+
+.vs__search {
+  caret-color: transparent; /* Убираем каретку */
+  pointer-events: none; /* Отключаем взаимодействие с полем ввода */
+}
+
+.vs__selected {
+  color: var(--3-color);
+}
+
+.vs__dropdown-menu::-webkit-scrollbar {
+  width: 0; /* Устанавливаем ширину скроллбара в 0 */
+  background: transparent; /* Делаем его невидимым */
+}
+
+/* Для Firefox */
+.vs__dropdown-menu {
+  scrollbar-width: none; /* Отключаем отображение скроллбара */
+}
+
+/* Для Internet Explorer и Edge */
+.vs__dropdown-menu {
+  -ms-overflow-style: none; /* Отключаем скроллбар для IE и старых версий Edge */
+}
+
+button.vs__clear {
+  display: none !important;
+  visibility: hidden !important;
+}
+svg.vs__open-indicator>path{
+  fill: var(--3-color50);
+}
+.vs__search{
+  color: var(--3-color20)
+}

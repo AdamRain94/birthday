@@ -24,7 +24,7 @@ export default {
         ...mapGetters('user', ['user']),
     },
     mounted() {
-        document.title = this.user.name + ' ' + this.user.fam;
+        document.title = (this.user.name || '') + ' ' + (this.user.fam || '');
     }
 };
 </script>

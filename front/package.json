@@ -13,6 +13,7 @@
     "moment": "^2.30.1",
     "vue": "^3.4.29",
     "vue-router": "^4.4.3",
+    "vue3-select": "^0.1.2",
     "vuex": "^4.1.0"
   },
   "devDependencies": {

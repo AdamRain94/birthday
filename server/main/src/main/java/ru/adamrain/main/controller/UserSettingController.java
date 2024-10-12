@@ -39,9 +39,7 @@ public class UserSettingController {
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
-        User updateUser = userService.saveUser(userDetails, user);
-        if(updateUser == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при сохранении данных!");
-        return ResponseEntity.ok(updateUser);
+        return userService.saveUser(userDetails, user);
     }
 
     @GetMapping("/photo")

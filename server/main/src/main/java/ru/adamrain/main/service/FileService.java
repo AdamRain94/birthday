@@ -34,7 +34,7 @@ public class FileService {
     }
 
     private String saveFile(MultipartFile file, String dir, String tel) {
-        String fileName = UUID.randomUUID() + "_" + tel + ".jpg";
+        String fileName = UUID.randomUUID() + "_" + formatTel(tel) + ".jpg";
         Path rootPath = Paths.get(System.getProperty("user.dir")).resolve(dir);
         Path filePath = rootPath.resolve(fileName);
 
@@ -104,5 +104,11 @@ public class FileService {
             delete = file.delete();
         }
         log.info(delete ? "Файл \"" + path + "\" удалён" : "Не удалось удалить файл \"" + path+"\"");
+    }
+
+    private String formatTel(String tel){
+        return tel.replaceAll("-", "")
+                .replaceAll(" ", "")
+                .replaceAll("\\+", "");
     }
 }

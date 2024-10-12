@@ -6,13 +6,13 @@
                 <router-link class="li" to="/setting/me">
                     Личная информация
                 </router-link>
-                <router-link class="li" to="/setting/me2">
+                <router-link class="li" to="/setting/account">
+                    Аккаунт
+                </router-link>
+                <router-link class="li" to="/setting/me">
                     Какой-то ещё блок
                 </router-link>
-                <router-link class="li" to="/setting/me2">
-                    Какой-то ещё блок
-                </router-link>
-                <router-link class="li" to="/setting/me2">
+                <router-link class="li" to="/setting/account">
                     Какой-то ещё блок
                 </router-link>
             </div>

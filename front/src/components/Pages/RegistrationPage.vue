@@ -12,7 +12,7 @@
                     <input v-model="password" maxlength="20" placeholder="Пароль" type="password"
                            @input="checkPasswords"/>
                     <input v-model="password_2" maxlength="20" placeholder="Подтвердите пароль" type="password"
-                           @input="checkPasswords"/>
+                           @input="checkPasswords" class="mb-0"/>
                     <div class="message">{{ error }}</div>
                 </div>
                 <div class="buttons">
@@ -61,13 +61,17 @@ export default {
         },
         filterName() {
             const regex = /^[А-Яа-яЁё\s]*$/;
+            this.setError('')
             if (!regex.test(this.name)) {
+                this.setError('Разрешены только русские буквы!')
                 this.name = this.name.replace(/[^А-Яа-яЁё\s]/g, '');
             }
         },
         filterTel() {
             const regex = /^[0-9()+-]*$/;
+            this.setError('')
             if (!regex.test(this.tel)) {
+                this.setError('Разрешены только цифры и специальные символы!')
                 this.tel = this.tel.replace(/[^0-9()+-]/g, '');
             }
         }
@@ -136,12 +140,14 @@ export default {
 }
 
 .message {
+    display: flex;
+    justify-content: center;  /* Центрирование по горизонтали */
+    align-items: center;
     text-align: center;
     top: 55px;
-    min-height: 25px;
+    min-height: 32px;
     cursor: default;
     font-size: 0.9em;
-    padding-bottom: 10px;
     color: var(--4-color);
 }
 

@@ -23,8 +23,9 @@ export default {
             await base_url.get('/setting/user')
                 .then((data) => {
                     commit('setUser', data.data);
+                    commit('error/setError', '', {root: true});
                 }).catch(error => {
-                    commit('error/setError', error, {root: true});
+                    commit('error/setError', error.response.data, {root: true});
                 }).finally(() => {
                     commit('error/setLoading', false, {root: true});
                 });
@@ -34,8 +35,9 @@ export default {
             await base_url.post('/setting/user', state.user)
                 .then((data) => {
                     commit('setUser', data.data);
+                    commit('error/setError', '', {root: true});
                 }).catch(error => {
-                    commit('error/setError', error, {root: true});
+                    commit('error/setError', error.response.data, {root: true});
                 }).finally(() => {
                     commit('error/setLoading', false, {root: true});
                 });

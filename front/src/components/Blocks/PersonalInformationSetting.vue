@@ -7,28 +7,36 @@
             <div class="main">
                 <div class="left_block">
                     <div class="input-block">
+                        <div class="title">ID Пользователя</div>
+                        <input disabled :value="id" class="value" placeholder="ID Пользователя">
+                    </div>
+                    <div class="input-block">
                         <div class="title">Фамилия</div>
                         <input v-model="user.fam" maxlength="20" class="value" placeholder="Фамилия"
-                               @input="user.fam = filter($event.target.value)">
+                               @input="updateFam">
                     </div>
                     <div class="input-block">
                         <div class="title">Имя</div>
                         <input v-model="user.name" maxlength="20" class="value" placeholder="Имя"
-                               @input="user.name = filter($event.target.value)">
+                               @input="updateName">
                     </div>
                     <div class="input-block">
                         <div class="title">Отчество</div>
                         <input v-model="user.otch" maxlength="20" class="value" placeholder="Отчество"
-                               @input="user.otch = filter($event.target.value)">
+                               @input="updateOtch">
                     </div>
                     <div class="input-block">
                         <div class="title">Дата рождения</div>
-                        <input v-model="dateOfBirth" type="date" class="value" placeholder="Дата рождения">
+                        <date-of-birthday v-model="user.dateOfBirth" class="value"/>
+                    </div>
+                    <div class="input-block">
+                        <div class="title">Пол</div>
+                        <sex-select v-model="user.sex" class="value"/>
                     </div>
                     <div class="input-block">
                         <div class="title">Номер телефона</div>
                         <input v-model="user.tel" maxlength="18" type="tel" class="value" placeholder="Номер телефона"
-                               @input="user.tel = filterTel($event.target.value)">
+                               @input="updateTel">
                     </div>
                     <div class="input-block">
                         <div class="title">Пароль</div>
@@ -61,8 +69,11 @@
 import {mapActions, mapGetters, mapMutations} from 'vuex';
 import img from '@/assets/images/default_photo_user.png';
 import moment from 'moment';
+import DateOfBirthday from '@/components/UI/DateOfBirthdaySelect.vue';
+import SexSelect from '@/components/UI/SexSelect.vue';
 
 export default {
+    components: {SexSelect, DateOfBirthday},
     data() {
         return {
             img: img,
@@ -77,7 +88,7 @@ export default {
             const img = new Image();
             img.src = this.userPhoto;
             img.onerror = () => {
-                this.getUserPhoto(null);
+                this.getUserPhoto();
             };
             return this.userPhoto;
         },
@@ -93,11 +104,14 @@ export default {
                     dateOfBirth: value
                 });
             }
+        },
+        id(){
+            return this.user.id;
         }
     },
     mounted() {
-        this.getUser(null);
-        this.getUserPhoto(null);
+        this.getUser();
+        this.getUserPhoto();
     },
     methods: {
         ...mapMutations('user', ['setUser']),
@@ -108,37 +122,56 @@ export default {
         onImageChange(event) {
             const file = event.target.files[0];
             if (file && file.type.includes('image')) {
-                this.img = URL.createObjectURL(file)
+                this.img = URL.createObjectURL(file);
                 this.setNewUserPhoto(file);
             }
         },
         checkPasswords() {
             if (this.user.password !== this.password) {
                 this.setError('Пароли не совпадают!');
-                this.setDisable(true)
+                this.setDisable(true);
             } else {
                 this.setError('');
-                this.setDisable(false)
+                this.setDisable(false);
             }
         },
         filter(value) {
             const regex = /^[А-Яа-яЁё\s]*$/;
+            this.setError('')
             if (!regex.test(value)) {
+                this.setError('Разрешены только русские буквы!')
                 value = value.replace(/[^А-Яа-яЁё\s]/g, '');
             }
             return value;
         },
         filterTel(value) {
-            const regex = /^[0-9()+-]*$/;
+            const regex = /^[0-9()+-\s]*$/;
             if (!regex.test(value)) {
-                value = value.replace(/[^0-9()+-]/g, '');
+                value = value.replace(/[^0-9()+-\s]/g, '');
             }
             return value;
+        },
+        updateFam(event) {
+            const filteredFam = this.filter(event.target.value);
+            this.setUser({...this.user, fam: filteredFam});
+        },
+        updateName(event) {
+            const filteredName = this.filter(event.target.value);
+            this.setUser({...this.user, name: filteredName});
+        },
+        updateOtch(event) {
+            const filteredOtch = this.filter(event.target.value);
+            this.setUser({...this.user, otch: filteredOtch});
+        },
+        updateTel(event) {
+            const filteredTel = this.filterTel(event.target.value);
+            this.setUser({...this.user, tel: filteredTel});  // Используем мутацию для обновления значения tel
         }
     },
     beforeRouteLeave(to, from, next) {
         this.clearUserData(); // Очистка данных пользователя при уходе с маршрута
         this.setNewUserPhoto(null);
+        this.getUser();
         next();
     }
 };
@@ -187,6 +220,7 @@ export default {
 .input-block {
     display: flex;
     align-items: center;
+    width: 360px;
     gap: 10px;
     padding-bottom: 10px;
     margin-right: 10px;

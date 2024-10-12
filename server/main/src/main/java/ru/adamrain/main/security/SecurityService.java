@@ -18,6 +18,7 @@ import ru.adamrain.main.exception.RefreshTokenException;
 import ru.adamrain.main.exception.UserTelNotFoundExcepion;
 import ru.adamrain.main.repository.UserRepository;
 import ru.adamrain.main.security.jwt.JwtUtils;
+import ru.adamrain.main.service.PhoneNumberService;
 import ru.adamrain.main.service.RefreshTokenService;
 import ru.adamrain.main.web.model.*;
 
@@ -27,7 +28,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-// Сервисный класс для обработки аутентификации, регистрации пользователей и управления токенами.
 public class SecurityService {
 
     private final AuthenticationManager authenticationManager; // Менеджер аутентификации для обработки аутентификации.
@@ -35,27 +35,28 @@ public class SecurityService {
     private final RefreshTokenService refreshTokenService; // Сервис для управления refresh токенами.
     private final UserRepository userRepository; // Репозиторий для работы с пользователями.
     private final PasswordEncoder passwordEncoder; // Кодировщик паролей.
+    private final PhoneNumberService phoneNumberService;
 
     public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
-        User user = userRepository.findByTel(loginRequest.getTel()).orElse(null);
-        if (user == null) {
-            return ResponseEntity.status(404).body("Пользователь не найден!");
-        }
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+
+        String tel = phoneNumberService.valid(loginRequest.getTel());
+        if (tel == null) return ResponseEntity.status(400).body("Невалидный номер телефона!");
+
+        User user = userRepository.findByTel(tel).orElse(null);
+        if (user == null) return ResponseEntity.status(404).body("Пользователь не найден!");
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()))
             return ResponseEntity.status(400).body("Неверный пароль!");
-        }
-        // Аутентификация пользователя с помощью предоставленных учетных данных.
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getTel(), // Получаем телефон пользователя.
-                loginRequest.getPassword() // Получаем пароль пользователя.
+                tel,
+                loginRequest.getPassword()
         ));
-        // Установка аутентификации в контекст безопасности.
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        // Получаем детали пользователя.
         AppUserDetails userDetails = (AppUserDetails) authentication.getPrincipal();
-        // Создаем новый refresh токен для пользователя.
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
-        // Возвращаем объект AuthResponse с данными аутентификации.
+
         return ResponseEntity.ok().body(AuthResponse.builder()
                 .id(user.getId())
                 .fam(user.getFam())
@@ -63,30 +64,30 @@ public class SecurityService {
                 .otch(user.getOtch())
                 .dateOfBirth(user.getDateOfBirth())
                 .dateRegistration(user.getDateRegistration())
-                .tel(user.getTel()) // Добавляем телефон пользователя.
+                .tel(user.getTel())
                 .token(jwtUtils.generateJwtToken(userDetails)) // Генерируем JWT токен.
                 .refreshToken(refreshToken.getToken()) // Добавляем refresh токен в ответ.
                 .build());
     }
 
     public ResponseEntity<?> register(CreateUserRequest createUserRequest) {
-        // Проверяем, существует ли уже пользователь с таким номером телефона
-        if (userRepository.existsByTel(createUserRequest.getTel())) {
+        String tel = phoneNumberService.valid(createUserRequest.getTel());
+
+        if (tel == null) return ResponseEntity.status(400).body("Невалидный номер телефона!");
+        if (userRepository.existsByTel(tel))
             return ResponseEntity.status(400).body("Данный номер уже зарегистрирован!");
-        }
-        // проставляем по умолчанию роль юзера
+
         createUserRequest.setRoles(Collections.singleton(RoleType.ROLE_USER));
-        // Создание нового пользователя и сохранение его в базе данных.
+
         User user = User.builder()
-                .tel(createUserRequest.getTel()) // Устанавливаем телефон.
-                .name(createUserRequest.getName()) // Устанавливаем имя.
-                .password(passwordEncoder.encode(createUserRequest.getPassword())) // Кодируем пароль перед сохранением.
-                .roles(createUserRequest.getRoles()) // Устанавливаем роли.
+                .tel(tel)
+                .name(createUserRequest.getName())
+                .password(passwordEncoder.encode(createUserRequest.getPassword()))
+                .roles(createUserRequest.getRoles())
                 .build();
-        userRepository.save(user); // Сохраняем пользователя в базе данных.
-        // Авторизация нового пользователя
-        LoginRequest login = new LoginRequest(createUserRequest.getTel(), createUserRequest.getPassword());
-        return authenticateUser(login);
+
+        userRepository.save(user);
+        return authenticateUser(new LoginRequest(createUserRequest.getTel(), createUserRequest.getPassword()));
     }
 
     public ResponseEntity<?> refreshTokenResponse(RefreshTokenRequest refreshTokenRequest) {

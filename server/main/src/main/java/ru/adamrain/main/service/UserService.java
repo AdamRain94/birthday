@@ -2,6 +2,7 @@ package ru.adamrain.main.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,22 +23,31 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final PhoneNumberService phoneNumberService;
+
     public User getUser(UserDetails userDetails) {
         return userRepository.findByTel(userDetails.getUsername()).orElse(null);
     }
 
-    public User saveUser(UserDetails userDetails, User user) {
+    public ResponseEntity<?> saveUser(UserDetails userDetails, User user) {
         User updateUser = userRepository.findByTel(userDetails.getUsername()).orElse(null);
-        if (updateUser == null) return null;
+        if (updateUser == null)
+            return ResponseEntity.status(400).body("Произошла ошибка при сохранении пользователя!");
+        String tel = phoneNumberService.valid(user.getTel());
+        if (tel == null)
+            return ResponseEntity.status(400).body("Невалидный номер телефона!");
+        if (userRepository.existsByTel(tel) && !tel.equals(updateUser.getTel()))
+            return ResponseEntity.status(400).body("Данный номер уже зарегистрирован!");
         updateUser.setFam(user.getFam());
         updateUser.setName(user.getName());
         updateUser.setOtch(user.getOtch());
+        updateUser.setSex(user.getSex());
         updateUser.setDateOfBirth(user.getDateOfBirth());
-        updateUser.setTel(user.getTel());
+        updateUser.setTel(tel);
         if (user.getPassword() != null && !user.getPassword().isEmpty())
             updateUser.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(updateUser);
+        User saveUser = userRepository.save(updateUser);
+        return ResponseEntity.ok(saveUser);
     }
 
     public User savePhoto(UserDetails userDetails, MultipartFile photo) {
@@ -47,7 +57,7 @@ public class UserService {
         if (phat == null) return null;
         UserPhoto userPhoto = user.getPhoto();
         if (userPhoto == null) userPhoto = new UserPhoto();
-        if(userPhoto.getPath() != null) fileService.deleteUserPhoto(userPhoto.getPath());
+        if (userPhoto.getPath() != null) fileService.deleteUserPhoto(userPhoto.getPath());
         userPhoto.setUser(user);
         userPhoto.setPath(phat);
         user.setPhoto(userPhoto);

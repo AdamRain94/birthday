@@ -1,8 +1,10 @@
 package ru.adamrain.main.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +35,11 @@ public class User {
     @Size(max = 20, message = "Отчество не должно превышать 20 символов")
     private String otch;
 
+    @Min(1)
+    @Max(2)
+    private Integer sex;
+
+    @Past(message = "Дата рождения должна быть в прошлом")
     private Date dateOfBirth;
 
     @Column(unique = true)

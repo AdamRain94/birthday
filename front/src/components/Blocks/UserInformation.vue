@@ -8,22 +8,30 @@
             <img v-if="photo" class="photo" :src="photo" alt="userPhoto"/>
             <img v-if="!photo" class="photo" :src="img" alt="userPhoto"/>
             <div class="information">
-                <div class="info">
+                <div v-if="dateOfBirth" class="info">
                     <div>День рождения:</div>
                     <div>{{ dateOfBirth }}</div>
+                </div>
+                <div v-if="age" class="info">
+                    <div>Возраст:</div>
+                    <div>{{ age }}</div>
+                </div>
+                <div v-if="sex" class="info">
+                    <div>Пол:</div>
+                    <div>{{ sex }}</div>
                 </div>
                 <div class="info">
                     <div>Номер телефон</div>
                     <div>{{ userInfo.tel }}</div>
                 </div>
-                <div class="info">
-                    <div>Место учёбы:</div>
-                    <div>СОШ №15</div>
-                </div>
-                <div class="info">
-                    <div>Место работы:</div>
-                    <div>ООО "СОЦ-ИНФОРМ"</div>
-                </div>
+<!--                <div class="info">-->
+<!--                    <div>Место учёбы:</div>-->
+<!--                    <div>СОШ №15</div>-->
+<!--                </div>-->
+<!--                <div class="info">-->
+<!--                    <div>Место работы:</div>-->
+<!--                    <div>ООО "СОЦ-ИНФОРМ"</div>-->
+<!--                </div>-->
             </div>
         </div>
     </div>
@@ -62,6 +70,16 @@ export default {
             return this.userInfo.dateOfBirth
                 ? moment(this.userInfo.dateOfBirth).format('DD.MM.YYYY')
                 : '';
+        },
+        age() {
+            if (this.userInfo.dateOfBirth) {
+                const birthDate = moment(this.userInfo.dateOfBirth);
+                return moment().diff(birthDate, 'years'); // Расчет возраста
+            }
+            return ''; // Если дата рождения отсутствует
+        },
+        sex(){
+            return this.userInfo.sex ? (this.userInfo.sex === 1 ? 'Мужской' : 'Женский') : '';
         }
     }
 

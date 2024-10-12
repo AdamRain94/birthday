@@ -11,6 +11,7 @@ import ru.adamrain.main.exception.AlreadyExistException;
 import ru.adamrain.main.exception.UserTelNotFoundExcepion;
 import ru.adamrain.main.repository.UserRepository;
 import ru.adamrain.main.security.SecurityService;
+import ru.adamrain.main.service.PhoneNumberService;
 import ru.adamrain.main.web.model.*;
 
 import java.util.Collections;

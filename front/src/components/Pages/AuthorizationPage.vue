@@ -8,7 +8,7 @@
                 <div>
                     <div @click="registration" class="registration">Регистрация →</div>
                     <input v-model="tel" maxlength="18" placeholder="Номер телефона" @input="filterTel"/>
-                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password"/>
+                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password" class="mb-0"/>
                     <div class="message" >{{ error }}</div>
                 </div>
                 <div class="buttons">
@@ -45,7 +45,9 @@ export default {
         },
         filterTel() {
             const regex = /^[0-9()+-]*$/;
+            this.setError('')
             if (!regex.test(this.tel)) {
+                this.setError('Разрешены только цифры и специальные символы!')
                 this.tel = this.tel.replace(/[^0-9()+-]/g, '');
             }
         },
@@ -99,13 +101,6 @@ export default {
     width: 100%;
 }
 
-.title {
-    padding-bottom: 15px;
-    font-size: 1.2em;
-    text-align: center;
-    color: white;
-}
-
 
 .registration {
     padding-bottom: 2px;
@@ -124,10 +119,9 @@ export default {
     min-height: 25px;
     cursor: default;
     font-size: 0.9em;
-    padding-bottom: 10px;
+    padding-bottom: 2px;
     color: var(--4-color);
 }
-
 
 .btn.loading {
     background: linear-gradient(90deg, var(--2-color) 0%, var(--2-color20) 50%, var(--2-color) 100%);

@@ -9,7 +9,8 @@ import store from '@/store/index.js';
 import SettingPage from '@/components/Pages/SettingPage.vue';
 import SidebarInSetting from '@/components/Bar/SidebarInSetting.vue';
 import LichnayaInformation2 from '@/components/Blocks/LichnayaInformation2.vue';
-import PersonalInformation from '@/components/Blocks/PersonalInformation.vue';
+import PersonalInformation from '@/components/Blocks/PersonalInformationSetting.vue';
+import AccountSetting from '@/components/Blocks/AccountSetting.vue';
 
 const routes = [
     {
@@ -64,9 +65,9 @@ const routes = [
                 }
             },
             {
-                path: 'me2',
+                path: 'account',
                 components: {
-                    default: LichnayaInformation2,
+                    default: AccountSetting,
                     sidebarInSetting: SidebarInSetting
                 }
             }
