@@ -72,7 +72,7 @@ public class FileService {
             return null;
         }
 
-        return filePath.toString();
+        return fileName;
     }
 
     private int getOrientation(File file) {
@@ -97,13 +97,15 @@ public class FileService {
         return rotatedImage;
     }
 
-    public void deleteUserPhoto(String path) {
-        File file = new File(path);
-        boolean delete = false;
-        if (file.exists()) {
-            delete = file.delete();
+    public void deleteUserPhoto(String fileName) {
+        Path filePath = Paths.get(System.getProperty("user.dir")).resolve(userPhotoDir).resolve(fileName);
+
+        try {
+            boolean delete = Files.deleteIfExists(filePath);
+            log.info(delete ? "Файл \"" + filePath + "\" удалён" : "Не удалось удалить файл \"" + filePath + "\"");
+        } catch (IOException e) {
+            log.error("Ошибка при удалении файла \"" + filePath + "\": " + e.getMessage(), e);
         }
-        log.info(delete ? "Файл \"" + path + "\" удалён" : "Не удалось удалить файл \"" + path+"\"");
     }
 
     private String formatTel(String tel){

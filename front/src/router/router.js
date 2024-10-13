@@ -8,9 +8,9 @@ import Sidebar from '@/components/Bar/Sidebar.vue';
 import store from '@/store/index.js';
 import SettingPage from '@/components/Pages/SettingPage.vue';
 import SidebarInSetting from '@/components/Bar/SidebarInSetting.vue';
-import LichnayaInformation2 from '@/components/Blocks/LichnayaInformation2.vue';
 import PersonalInformation from '@/components/Blocks/PersonalInformationSetting.vue';
 import AccountSetting from '@/components/Blocks/AccountSetting.vue';
+import AllUserListPage from '@/components/Pages/AllUserListPage.vue';
 
 const routes = [
     {
@@ -36,6 +36,15 @@ const routes = [
         name: 'page',
         components: {
             default: Page,
+            sidebar: Sidebar
+        },
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/all-users',
+        name: 'all-users',
+        components: {
+            default: AllUserListPage,
             sidebar: Sidebar
         },
         meta: {requiresAuth: true}

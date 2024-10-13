@@ -65,6 +65,7 @@ public class SecurityService {
                 .dateOfBirth(user.getDateOfBirth())
                 .dateRegistration(user.getDateRegistration())
                 .tel(user.getTel())
+                .photo(user.getPhoto())
                 .token(jwtUtils.generateJwtToken(userDetails)) // Генерируем JWT токен.
                 .refreshToken(refreshToken.getToken()) // Добавляем refresh токен в ответ.
                 .build());

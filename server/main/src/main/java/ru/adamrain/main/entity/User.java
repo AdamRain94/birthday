@@ -57,7 +57,5 @@ public class User {
     @Builder.Default
     private Set<RoleType> roles = new HashSet<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private UserPhoto photo;
+    private String photo;
 }

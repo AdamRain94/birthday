@@ -20,6 +20,7 @@ public class AuthResponse {
     private String fam;
     private String otch;
     private String tel;
+    private String photo;
     private String refreshToken;
     private Date dateOfBirth;
     private Date dateRegistration;

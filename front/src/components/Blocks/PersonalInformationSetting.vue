@@ -52,8 +52,8 @@
                 </div>
                 <div class="right_block">
                     <div class="file-input-wrapper">
-                        <img v-if="newUserPhoto || !photo" class="user_photo" :src="img" alt="user-photo"/>
-                        <img v-if="photo && !newUserPhoto" class="user_photo" :src="photo" alt="user-photo"/>
+                        <img v-if="newUserPhoto || !user.photo" class="user_photo" :src="img" alt="user-photo"/>
+                        <img v-if="user.photo && !newUserPhoto" class="user_photo" :src="photo" alt="user-photo"/>
                         <input type="file" @change="onImageChange" accept="image/*" class="file-input" id="file-input"/>
                         <label for="file-input" class="btn">
                             Выбрать фото
@@ -82,15 +82,9 @@ export default {
     },
     computed: {
         ...mapGetters('user', ['user']),
-        ...mapGetters('photo', ['userPhoto']),
-        ...mapGetters('photo', ['newUserPhoto']),
+        ...mapGetters('user', ['newUserPhoto']),
         photo() {
-            const img = new Image();
-            img.src = this.userPhoto;
-            img.onerror = () => {
-                this.getUserPhoto();
-            };
-            return this.userPhoto;
+            return `http://localhost:8080/api/files/photo/user/${this.user.photo}`;
         },
         dateOfBirth: {
             get() {
@@ -111,14 +105,12 @@ export default {
     },
     mounted() {
         this.getUser();
-        this.getUserPhoto();
     },
     methods: {
         ...mapMutations('user', ['setUser']),
         ...mapMutations('error', ['setError', 'setDisable', 'clearUserData']),
-        ...mapMutations('photo', ['setNewUserPhoto']),
+        ...mapMutations('user', ['setNewUserPhoto']),
         ...mapActions('user', ['getUser']),
-        ...mapActions('photo', ['getUserPhoto']),
         onImageChange(event) {
             const file = event.target.files[0];
             if (file && file.type.includes('image')) {
@@ -145,9 +137,11 @@ export default {
             return value;
         },
         filterTel(value) {
-            const regex = /^[0-9()+-\s]*$/;
+            const regex = /^[0-9()\s+-]*$/;
+            this.setError('')
             if (!regex.test(value)) {
-                value = value.replace(/[^0-9()+-\s]/g, '');
+                this.setError('Разрешены только цифры и специальные символы!')
+                value = value.replace(/[^0-9()\s+-]/g, '');
             }
             return value;
         },

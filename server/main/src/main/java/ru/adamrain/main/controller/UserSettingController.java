@@ -25,9 +25,9 @@ public class UserSettingController {
     private final UserService userService;
 
     @GetMapping("/user")
-    public ResponseEntity<?> getUser(@AuthenticationPrincipal UserDetails userDetails)  {
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.getUser(userDetails);
-        if(user == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Пользователь не найден!");
+        if (user == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Пользователь не найден!");
         return ResponseEntity.ok(user);
     }
 
@@ -36,32 +36,19 @@ public class UserSettingController {
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody User user) {
         try {
             Thread.sleep(1000);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return userService.saveUser(userDetails, user);
     }
 
-    @GetMapping("/photo")
-    public ResponseEntity<?> getPhotoUser(@AuthenticationPrincipal UserDetails userDetails){
-        File photoUser = userService.getPhoto(userDetails);
-        if(photoUser == null) return ResponseEntity.status(204).body("Фото не найдено!");
-        Resource resource = new FileSystemResource(photoUser);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + photoUser.getName() + "\"");
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(photoUser.length())
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(resource);
-    }
-
     @PostMapping("/photo")
     public ResponseEntity<?> updatePhotoUser(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam("photo") MultipartFile photo){
+            @RequestParam("photo") MultipartFile photo) {
         User user = userService.savePhoto(userDetails, photo);
-        if(user == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при сохранении фото!");
-        return ResponseEntity.ok().build();
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при сохранении фото!");
+        return ResponseEntity.ok(user);
     }
 }

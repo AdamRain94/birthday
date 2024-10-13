@@ -4,7 +4,8 @@ export default {
     namespaced: true,
     state() {
         return {
-            user: JSON.parse(localStorage.getItem('user')) || null
+            user: JSON.parse(localStorage.getItem('user')) || null,
+            newUserPhoto: null
         };
     },
     mutations: {
@@ -15,6 +16,9 @@ export default {
         clearUser(state) {
             state.user = null;
             localStorage.removeItem('user');
+        },
+        setNewUserPhoto(state, photo) {
+            state.newUserPhoto = photo;
         }
     },
     actions: {
@@ -41,11 +45,34 @@ export default {
                 }).finally(() => {
                     commit('error/setLoading', false, {root: true});
                 });
+        },
+        async updateUserPhoto({commit, state}) {
+            commit('error/setLoading', true, {root: true});
+            if (state.newUserPhoto != null) {
+                const formData = new FormData();
+                formData.append('photo', state.newUserPhoto);
+                await base_url.post('/setting/photo', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then((data) => {
+                    commit('setUser', data.data);
+                    commit('setNewUserPhoto', null);
+                }).catch(error => {
+                    commit('error/setError', error.response.data, {root: true});
+                }).finally(() => {
+                    commit('error/setLoading', false, {root: true});
+                });
+            }
         }
+
     },
     getters: {
         user(state) {
             return state.user;
         },
+        newUserPhoto(state) {
+            return state.newUserPhoto;
+        }
     }
 };

@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         ...mapActions('user',['updateUser']),
-        ...mapActions('photo',['updateUserPhoto']),
+        ...mapActions('user',['updateUserPhoto']),
          save() {
             this.updateUser();
             this.updateUserPhoto()

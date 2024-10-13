@@ -5,8 +5,8 @@
             <div class="online">последний раз в сети 15.09.24 15:16</div>
         </div>
         <div class="main">
-            <img v-if="photo" class="photo" :src="photo" alt="userPhoto"/>
-            <img v-if="!photo" class="photo" :src="img" alt="userPhoto"/>
+            <img v-if="user.photo" class="photo" :src="photo" alt="userPhoto"/>
+            <img v-if="!user.photo" class="photo" :src="img" alt="userPhoto"/>
             <div class="information">
                 <div v-if="dateOfBirth" class="info">
                     <div>День рождения:</div>
@@ -49,22 +49,13 @@ export default {
             img: img
         };
     },
-    methods:{
-        ...mapActions('photo', ['getUserPhoto'])
-    },
     computed: {
         ...mapGetters('user',['user']),
-        ...mapGetters('photo',['userPhoto']),
         userInfo() {
             return this.user || {};
         },
         photo() {
-            const img = new Image();
-            img.src = this.userPhoto;
-            img.onerror = () => {
-                this.getUserPhoto()
-            };
-            return this.userPhoto;
+            return `http://localhost:8080/api/files/photo/user/${this.user.photo}`;
         },
         dateOfBirth() {
             return this.userInfo.dateOfBirth

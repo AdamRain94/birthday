@@ -18,8 +18,7 @@
                 <div class="buttons">
                     <button :disabled="isDisabled || loading" @click="enter" class="btn"
                             :class="{ loading : loading}">
-                        <span v-if="loading">Загрузка...</span>
-                        <span v-else>Зарегистрироваться</span>
+                        <span>Зарегистрироваться</span>
                     </button>
                 </div>
             </div>
@@ -68,11 +67,11 @@ export default {
             }
         },
         filterTel() {
-            const regex = /^[0-9()+-]*$/;
+            const regex = /^[0-9()\s+-]*$/;
             this.setError('')
             if (!regex.test(this.tel)) {
                 this.setError('Разрешены только цифры и специальные символы!')
-                this.tel = this.tel.replace(/[^0-9()+-]/g, '');
+                this.tel = this.tel.replace(/[^0-9()\s+-]/g, '');
             }
         }
     },

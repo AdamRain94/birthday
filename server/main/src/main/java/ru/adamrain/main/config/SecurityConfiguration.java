@@ -97,8 +97,10 @@ public class SecurityConfiguration {
                 // Включаем поддержку CORS по умолчанию.
 
                 .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/api/files/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll() // Разрешаем доступ ко всем запросам, начиная с "/api/v1/app/**", без аутентификации.
-                        .anyRequest().authenticated()) // остальные запросы только для авторизированных пользователей
+                        .anyRequest().authenticated()
+                ) // остальные запросы только для авторизированных пользователей
                 .exceptionHandling(configurer ->
                         configurer.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 // Устанавливаем обработчик ошибок аутентификации (в случае неправильного или отсутствующего токена).

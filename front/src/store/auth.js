@@ -39,7 +39,6 @@ export default {
                 .then(({data}) => {
                     commit('login', {accessToken: data.token, refreshToken: data.refreshToken});
                     commit('user/setUser', data, {root: true});
-                    dispatch('photo/getUserPhoto', null,{root: true})
                     router.push('/page');
                 }).catch(error => {
                     commit('error/setError', error.response.data, {root: true});
@@ -66,7 +65,6 @@ export default {
                 .then(() => {
                     commit('logout');
                     commit('user/clearUser', null, {root: true});
-                    commit('photo/clearUserPhoto', null, {root: true});
                     router.push('/authorization');
                 }).catch(error => {
                     commit('error/setError', error.response.data, {root: true});

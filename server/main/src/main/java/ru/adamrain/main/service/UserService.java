@@ -8,10 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.adamrain.main.entity.User;
-import ru.adamrain.main.entity.UserPhoto;
 import ru.adamrain.main.repository.UserRepository;
-
-import java.io.File;
 
 @Service
 @RequiredArgsConstructor
@@ -53,26 +50,12 @@ public class UserService {
     public User savePhoto(UserDetails userDetails, MultipartFile photo) {
         User user = userRepository.findByTel(userDetails.getUsername()).orElse(null);
         if (user == null) return null;
-        String phat = fileService.saveUserPhoto(photo, user.getTel());
-        if (phat == null) return null;
-        UserPhoto userPhoto = user.getPhoto();
-        if (userPhoto == null) userPhoto = new UserPhoto();
-        if (userPhoto.getPath() != null) fileService.deleteUserPhoto(userPhoto.getPath());
-        userPhoto.setUser(user);
-        userPhoto.setPath(phat);
-        user.setPhoto(userPhoto);
-
+        String fileName = fileService.saveUserPhoto(photo, user.getTel());
+        if (fileName == null) return null;
+        if (user.getPhoto() != null) fileService.deleteUserPhoto(user.getPhoto());
+        user.setPhoto(fileName);
         return userRepository.save(user);
     }
 
-    public File getPhoto(UserDetails userDetails) {
-        User user = userRepository.findByTel(userDetails.getUsername()).orElse(null);
-        if (user == null) return null;
-        UserPhoto photo = user.getPhoto();
-        if (photo == null) return null;
-        String path = photo.getPath();
-
-        return fileService.getUserPhoto(path);
-    }
 
 }

@@ -30,7 +30,6 @@
 }
 
 .layout .layout-right {
-    position: relative;
     width: 760px;
     min-width: 760px;
     height: 100%;

@@ -9,13 +9,12 @@
                     <div @click="registration" class="registration">Регистрация →</div>
                     <input v-model="tel" maxlength="18" placeholder="Номер телефона" @input="filterTel"/>
                     <input v-model="password" maxlength="20" placeholder="Пароль" type="password" class="mb-0"/>
-                    <div class="message" >{{ error }}</div>
+                    <div class="message">{{ error }}</div>
                 </div>
                 <div class="buttons">
                     <button :disabled="isDisabled || loading" @click="enter" class="btn"
                             :class="{ loading : loading}">
-                        <span v-if="loading">Загрузка...</span>
-                        <span v-else>Войти</span>
+                        <span>Войти</span>
                     </button>
                 </div>
             </div>
@@ -31,26 +30,26 @@ export default {
     data() {
         return {
             tel: '',
-            password: '',
+            password: ''
         };
     },
     methods: {
-        ...mapActions('auth',['login']),
+        ...mapActions('auth', ['login']),
         ...mapMutations('error', ['setError']),
         enter() {
-            this.login({tel: this.tel, password: this.password})
+            this.login({tel: this.tel, password: this.password});
         },
         registration() {
             router.push('/registration');
         },
         filterTel() {
-            const regex = /^[0-9()+-]*$/;
-            this.setError('')
+            const regex = /^[0-9()\s+-]*$/;
+            this.setError('');
             if (!regex.test(this.tel)) {
-                this.setError('Разрешены только цифры и специальные символы!')
-                this.tel = this.tel.replace(/[^0-9()+-]/g, '');
+                this.setError('Разрешены только цифры и специальные символы!');
+                this.tel = this.tel.replace(/[^0-9()\s+-]/g, '');
             }
-        },
+        }
     },
     computed: {
         ...mapGetters('error', ['loading']),
