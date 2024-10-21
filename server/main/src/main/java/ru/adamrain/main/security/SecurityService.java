@@ -23,6 +23,7 @@ import ru.adamrain.main.service.RefreshTokenService;
 import ru.adamrain.main.web.model.*;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class SecurityService {
     private final PasswordEncoder passwordEncoder; // Кодировщик паролей.
     private final PhoneNumberService phoneNumberService;
 
-    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
+    public ResponseEntity<Object> authenticateUser(LoginRequest loginRequest) {
 
         String tel = phoneNumberService.valid(loginRequest.getTel());
         if (tel == null) return ResponseEntity.status(400).body("Невалидный номер телефона!");
@@ -71,27 +72,28 @@ public class SecurityService {
                 .build());
     }
 
-    public ResponseEntity<?> register(CreateUserRequest createUserRequest) {
+    public ResponseEntity<Object> register(CreateUserRequest createUserRequest) {
+
         String tel = phoneNumberService.valid(createUserRequest.getTel());
 
         if (tel == null) return ResponseEntity.status(400).body("Невалидный номер телефона!");
         if (userRepository.existsByTel(tel))
             return ResponseEntity.status(400).body("Данный номер уже зарегистрирован!");
 
-        createUserRequest.setRoles(Collections.singleton(RoleType.ROLE_USER));
-
         User user = User.builder()
                 .tel(tel)
                 .name(createUserRequest.getName())
+                .dateRegistration(new Date())
                 .password(passwordEncoder.encode(createUserRequest.getPassword()))
-                .roles(createUserRequest.getRoles())
+                .roles(Collections.singleton(RoleType.ROLE_USER))
                 .build();
 
         userRepository.save(user);
+
         return authenticateUser(new LoginRequest(createUserRequest.getTel(), createUserRequest.getPassword()));
     }
 
-    public ResponseEntity<?> refreshTokenResponse(RefreshTokenRequest refreshTokenRequest) {
+    public ResponseEntity<Object> refreshTokenResponse(RefreshTokenRequest refreshTokenRequest) {
         // Получаем refresh токен из запроса.
         RefreshToken refreshToken = refreshTokenService.findByRefreshToken(refreshTokenRequest.getRefreshToken()).orElse(null);
         if (refreshToken != null) {

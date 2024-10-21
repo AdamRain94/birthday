@@ -7,8 +7,8 @@
             <div class="main">
                 <div>
                     <div @click="registration" class="registration">Регистрация →</div>
-                    <input v-model="tel" maxlength="18" placeholder="Номер телефона" @input="filterTel"/>
-                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password" class="mb-0"/>
+                    <input autocomplete="tel" v-model="tel" maxlength="18" placeholder="Номер телефона" @input="updateTel"/>
+                    <input autocomplete="current-password" v-model="password" maxlength="20" placeholder="Пароль" type="password" class="mb-0"/>
                     <div class="message">{{ error }}</div>
                 </div>
                 <div class="buttons">
@@ -25,6 +25,7 @@
 <script>
 import router from '@/router/router.js';
 import {mapActions, mapGetters, mapMutations} from 'vuex';
+import {filterTel} from '@/utils.js';
 
 export default {
     data() {
@@ -42,14 +43,9 @@ export default {
         registration() {
             router.push('/registration');
         },
-        filterTel() {
-            const regex = /^[0-9()\s+-]*$/;
-            this.setError('');
-            if (!regex.test(this.tel)) {
-                this.setError('Разрешены только цифры и специальные символы!');
-                this.tel = this.tel.replace(/[^0-9()\s+-]/g, '');
-            }
-        }
+        updateTel(event) {
+            this.tel = filterTel(event.target.value, this.setError)  // Используем мутацию для обновления значения tel
+        },
     },
     computed: {
         ...mapGetters('error', ['loading']),

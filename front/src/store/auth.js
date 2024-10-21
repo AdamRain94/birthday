@@ -1,4 +1,4 @@
-import base_url from '@/axios.js';
+import api from '@/axios.js';
 import router from '@/router/router.js';
 
 export default {
@@ -35,7 +35,7 @@ export default {
     actions: {
         async login({commit, dispatch}, credentials) {
             commit('error/setLoading', true, {root: true});
-            await base_url.post('/auth/login', credentials)
+            await api.post('/auth/login', credentials)
                 .then(({data}) => {
                     commit('login', {accessToken: data.token, refreshToken: data.refreshToken});
                     commit('user/setUser', data, {root: true});
@@ -48,7 +48,7 @@ export default {
         },
         async register({commit}, credentials) {
             commit('error/setLoading', true, {root: true});
-            await base_url.post('/auth/register', credentials)
+            await api.post('/auth/register', credentials)
                 .then(({data}) => {
                     commit('login', {accessToken: data.token, refreshToken: data.refreshToken});
                     commit('user/setUser', data, {root: true});
@@ -61,7 +61,7 @@ export default {
         },
         async exit({commit}) {
             commit('error/setLoading', true, {root: true});
-            await base_url.post('/auth/logout')
+            await api.post('/auth/logout')
                 .then(() => {
                     commit('logout');
                     commit('user/clearUser', null, {root: true});
@@ -75,7 +75,7 @@ export default {
         async refreshToken({commit, state}) {
             commit('error/setLoading', true, {root: true});
             const refreshToken = state.refreshToken;
-            await base_url.post('/auth/refresh-token', {refreshToken})
+            await api.post('/auth/refresh-token', {refreshToken})
                 .then(({data}) => {
                     commit('updateTokens', {accessToken: data.accessToken, refreshToken: data.refreshToken});
                 }).catch(error => {

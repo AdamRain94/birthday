@@ -26,34 +26,44 @@ public class UserService {
         return userRepository.findByTel(userDetails.getUsername()).orElse(null);
     }
 
-    public ResponseEntity<?> saveUser(UserDetails userDetails, User user) {
+    public ResponseEntity<Object> saveUser(UserDetails userDetails, User user) {
+
         User updateUser = userRepository.findByTel(userDetails.getUsername()).orElse(null);
         if (updateUser == null)
             return ResponseEntity.status(400).body("Произошла ошибка при сохранении пользователя!");
+
         String tel = phoneNumberService.valid(user.getTel());
         if (tel == null)
             return ResponseEntity.status(400).body("Невалидный номер телефона!");
+
         if (userRepository.existsByTel(tel) && !tel.equals(updateUser.getTel()))
             return ResponseEntity.status(400).body("Данный номер уже зарегистрирован!");
+
         updateUser.setFam(user.getFam());
         updateUser.setName(user.getName());
         updateUser.setOtch(user.getOtch());
         updateUser.setSex(user.getSex());
         updateUser.setDateOfBirth(user.getDateOfBirth());
         updateUser.setTel(tel);
+
         if (user.getPassword() != null && !user.getPassword().isEmpty())
             updateUser.setPassword(passwordEncoder.encode(user.getPassword()));
+
         User saveUser = userRepository.save(updateUser);
         return ResponseEntity.ok(saveUser);
     }
 
     public User savePhoto(UserDetails userDetails, MultipartFile photo) {
+
         User user = userRepository.findByTel(userDetails.getUsername()).orElse(null);
         if (user == null) return null;
+
         String fileName = fileService.saveUserPhoto(photo, user.getTel());
         if (fileName == null) return null;
+
         if (user.getPhoto() != null) fileService.deleteUserPhoto(user.getPhoto());
         user.setPhoto(fileName);
+
         return userRepository.save(user);
     }
 

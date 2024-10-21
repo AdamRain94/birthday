@@ -6,15 +6,8 @@
                     Пользователи
                 </div>
                 <div class="main">
-                    <div class="user" v-if="users" v-for="(user, index) in users" :key="user.id">
-                            <img v-if="user.photo" class="user-photo" :src="photo(user.photo)" alt="user-photo">
-                            <img v-if="!user.photo" class="user-photo" :src="img" alt="user-photo">
-                            <div class="user-information">
-                                <div>{{ user.fam }}</div>
-                                <div>{{ user.name }}</div>
-                                <div>{{ user.otch }}</div>
-                            </div>
-                    </div>
+                    <user-view-in-list-page class="user" v-if="users" v-for="(user) in users " :user="user"
+                                            :key="user.id" @click="goToPageUser(user.id)"/>
                 </div>
             </div>
         </div>
@@ -32,28 +25,24 @@
 </template>
 
 <script>
-import img from '@/assets/images/default_photo_user.png';
-import base_url from '@/axios.js';
+import api from '@/axios.js';
+import UserViewInListPage from '@/components/Blocks/UserViewInListPage.vue';
+import router from '@/router/router.js';
 
 export default {
+    components: {UserViewInListPage},
     data() {
         return {
-            img: img,
             users: []
         };
     },
     methods: {
-        getAllUsers() {
-            base_url.get('users/all')
-                .then(value => {
-                    this.users = value.data
-                })
-                .catch(error => {
-
-                });
+        async getAllUsers() {
+            let response = await api.get('users/all');
+            this.users = response.data;
         },
-        photo(filename) {
-            return `http://localhost:8080/api/files/photo/user/${filename}`;
+        goToPageUser(id) {
+            router.push(`/user/${id}`);
         },
     },
     mounted() {
@@ -75,27 +64,26 @@ export default {
     padding-right: 20px;
 }
 
-.user-photo {
-    aspect-ratio: 1 / 1;
-    width: 130px;
-    margin-right: 20px;
-    border-radius: 6px;
-    object-fit: cover;
-    overflow: hidden;
-}
-
 .search-block {
     min-width: 200px;
     height: 100%;
 }
 
-.main{
+.main {
     display: flex;
     flex-direction: column;
 }
+
 .user {
     display: flex;
+    cursor: pointer;
+    border-radius: 6px;
     margin-bottom: 10px; /* Отступ снизу для всех .user */
+}
+
+.user:hover {
+    background-color: var(--2-color50);
+    transition: background-color .3s linear;
 }
 
 .user:last-child {

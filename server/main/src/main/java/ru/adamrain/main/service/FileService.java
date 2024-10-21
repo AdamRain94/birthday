@@ -28,12 +28,8 @@ public class FileService {
         return saveFile(file, userPhotoDir, tel);
     }
 
-    public File getUserPhoto(String path) {
-        File file = new File(path);
-        return file.exists() ? file : null;
-    }
-
     private String saveFile(MultipartFile file, String dir, String tel) {
+
         String fileName = UUID.randomUUID() + "_" + formatTel(tel) + ".jpg";
         Path rootPath = Paths.get(System.getProperty("user.dir")).resolve(dir);
         Path filePath = rootPath.resolve(fileName);
@@ -98,6 +94,7 @@ public class FileService {
     }
 
     public void deleteUserPhoto(String fileName) {
+
         Path filePath = Paths.get(System.getProperty("user.dir")).resolve(userPhotoDir).resolve(fileName);
 
         try {

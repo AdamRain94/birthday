@@ -3,12 +3,10 @@ package ru.adamrain.main.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.adamrain.main.entity.User;
 import ru.adamrain.main.service.UsersService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,8 +17,12 @@ public class UsersController {
     private final UsersService usersService;
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllUsers() {
-        List<User> allUsers = usersService.getAllUsers();
-        return ResponseEntity.ok().body(allUsers);
+    public ResponseEntity<Object> getAllUsers() {
+        return usersService.getAllUsers();
+    }
+
+    @GetMapping("/{id}") // Используем аннотацию для извлечения id из URL
+    public ResponseEntity<Object> getUser(@PathVariable Long id) {
+        return usersService.getUser(id);
     }
 }

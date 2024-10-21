@@ -12,17 +12,17 @@
                     </div>
                     <div class="input-block">
                         <div class="title">Фамилия</div>
-                        <input v-model="user.fam" maxlength="20" class="value" placeholder="Фамилия"
+                        <input autocomplete="family-name" v-model="user.fam" maxlength="20" class="value" placeholder="Фамилия"
                                @input="updateFam">
                     </div>
                     <div class="input-block">
                         <div class="title">Имя</div>
-                        <input v-model="user.name" maxlength="20" class="value" placeholder="Имя"
+                        <input autocomplete="given-name" v-model="user.name" maxlength="20" class="value" placeholder="Имя"
                                @input="updateName">
                     </div>
                     <div class="input-block">
                         <div class="title">Отчество</div>
-                        <input v-model="user.otch" maxlength="20" class="value" placeholder="Отчество"
+                        <input autocomplete="additional-name" v-model="user.otch" maxlength="20" class="value" placeholder="Отчество"
                                @input="updateOtch">
                     </div>
                     <div class="input-block">
@@ -35,25 +35,24 @@
                     </div>
                     <div class="input-block">
                         <div class="title">Номер телефона</div>
-                        <input v-model="user.tel" maxlength="18" type="tel" class="value" placeholder="Номер телефона"
+                        <input autocomplete="tel" v-model="user.tel" maxlength="18" type="tel" class="value" placeholder="Номер телефона"
                                @input="updateTel">
                     </div>
                     <div class="input-block">
                         <div class="title">Пароль</div>
-                        <input v-model="user.password" maxlength="20" type="password" class="value" placeholder="Пароль"
+                        <input autocomplete="new-password" v-model="user.password" maxlength="20" type="password" class="value" placeholder="Пароль"
                                @input="checkPasswords">
                     </div>
                     <div class="input-block">
                         <div class="title">Подтвердите пароль</div>
-                        <input v-model="password" maxlength="20" type="password" class="value"
+                        <input autocomplete="new-password" v-model="password" maxlength="20" type="password" class="value"
                                placeholder="Подтвердите пароль" @input="checkPasswords">
                     </div>
 
                 </div>
                 <div class="right_block">
                     <div class="file-input-wrapper">
-                        <img v-if="newUserPhoto || !user.photo" class="user_photo" :src="img" alt="user-photo"/>
-                        <img v-if="user.photo && !newUserPhoto" class="user_photo" :src="photo" alt="user-photo"/>
+                        <img class="user_photo" :src="photo" alt="user-photo"/>
                         <input type="file" @change="onImageChange" accept="image/*" class="file-input" id="file-input"/>
                         <label for="file-input" class="btn">
                             Выбрать фото
@@ -67,25 +66,24 @@
 
 <script>
 import {mapActions, mapGetters, mapMutations} from 'vuex';
-import img from '@/assets/images/default_photo_user.png';
 import moment from 'moment';
 import DateOfBirthday from '@/components/UI/DateOfBirthdaySelect.vue';
 import SexSelect from '@/components/UI/SexSelect.vue';
+import {loadUserPhoto, filter, filterTel} from '@/utils.js'
+import default_photo from '@/assets/images/default_photo_user.png';
 
 export default {
     components: {SexSelect, DateOfBirthday},
     data() {
         return {
-            img: img,
+            photo: default_photo,
             password: ''
         };
     },
     computed: {
         ...mapGetters('user', ['user']),
         ...mapGetters('user', ['newUserPhoto']),
-        photo() {
-            return `http://localhost:8080/api/files/photo/user/${this.user.photo}`;
-        },
+
         dateOfBirth: {
             get() {
                 return this.user.dateOfBirth
@@ -99,12 +97,13 @@ export default {
                 });
             }
         },
-        id(){
+        id() {
             return this.user.id;
         }
     },
-    mounted() {
-        this.getUser();
+    async mounted() {
+        await this.getUser();
+        this.photo = await loadUserPhoto(this.user);
     },
     methods: {
         ...mapMutations('user', ['setUser']),
@@ -114,7 +113,7 @@ export default {
         onImageChange(event) {
             const file = event.target.files[0];
             if (file && file.type.includes('image')) {
-                this.img = URL.createObjectURL(file);
+                this.photo = URL.createObjectURL(file);
                 this.setNewUserPhoto(file);
             }
         },
@@ -127,40 +126,22 @@ export default {
                 this.setDisable(false);
             }
         },
-        filter(value) {
-            const regex = /^[А-Яа-яЁё\s]*$/;
-            this.setError('')
-            if (!regex.test(value)) {
-                this.setError('Разрешены только русские буквы!')
-                value = value.replace(/[^А-Яа-яЁё\s]/g, '');
-            }
-            return value;
-        },
-        filterTel(value) {
-            const regex = /^[0-9()\s+-]*$/;
-            this.setError('')
-            if (!regex.test(value)) {
-                this.setError('Разрешены только цифры и специальные символы!')
-                value = value.replace(/[^0-9()\s+-]/g, '');
-            }
-            return value;
-        },
         updateFam(event) {
-            const filteredFam = this.filter(event.target.value);
+            const filteredFam = filter(event.target.value, this.setError);
             this.setUser({...this.user, fam: filteredFam});
         },
         updateName(event) {
-            const filteredName = this.filter(event.target.value);
+            const filteredName = filter(event.target.value, this.setError);
             this.setUser({...this.user, name: filteredName});
         },
         updateOtch(event) {
-            const filteredOtch = this.filter(event.target.value);
+            const filteredOtch = filter(event.target.value, this.setError);
             this.setUser({...this.user, otch: filteredOtch});
         },
         updateTel(event) {
-            const filteredTel = this.filterTel(event.target.value);
+            const filteredTel = filterTel(event.target.value, this.setError);
             this.setUser({...this.user, tel: filteredTel});  // Используем мутацию для обновления значения tel
-        }
+        },
     },
     beforeRouteLeave(to, from, next) {
         this.clearUserData(); // Очистка данных пользователя при уходе с маршрута

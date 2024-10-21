@@ -1,4 +1,4 @@
-import base_url from '@/axios.js';
+import api from '@/axios.js';
 
 export default {
     namespaced: true,
@@ -24,7 +24,7 @@ export default {
     actions: {
         async getUser({commit}) {
             commit('error/setLoading', true, {root: true});
-            await base_url.get('/setting/user')
+            await api.get('/setting/user')
                 .then((data) => {
                     commit('setUser', data.data);
                     commit('error/setError', '', {root: true});
@@ -36,7 +36,7 @@ export default {
         },
         async updateUser({commit, state}) {
             commit('error/setLoading', true, {root: true});
-            await base_url.post('/setting/user', state.user)
+            await api.post('/setting/user', state.user)
                 .then((data) => {
                     commit('setUser', data.data);
                     commit('error/setError', '', {root: true});
@@ -51,7 +51,7 @@ export default {
             if (state.newUserPhoto != null) {
                 const formData = new FormData();
                 formData.append('photo', state.newUserPhoto);
-                await base_url.post('/setting/photo', formData, {
+                await api.post('/setting/photo', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -65,7 +65,6 @@ export default {
                 });
             }
         }
-
     },
     getters: {
         user(state) {

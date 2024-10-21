@@ -7,11 +7,11 @@
             <div class="main">
                 <div>
                     <div @click="authorization" class="authorization">← Авторизация</div>
-                    <input v-model="name" maxlength="20" placeholder="Имя" @input="filterName"/>
-                    <input v-model="tel" maxlength="18" placeholder="Номер телефона" type="tel" @input="filterTel"/>
-                    <input v-model="password" maxlength="20" placeholder="Пароль" type="password"
+                    <input autocomplete="given-name" v-model="name" maxlength="20" placeholder="Имя" @input="updateName"/>
+                    <input autocomplete="tel" v-model="tel" maxlength="18" placeholder="Номер телефона" type="tel" @input="updateTel"/>
+                    <input autocomplete="new-password" v-model="password" maxlength="20" placeholder="Пароль" type="password"
                            @input="checkPasswords"/>
-                    <input v-model="password_2" maxlength="20" placeholder="Подтвердите пароль" type="password"
+                    <input autocomplete="new-password" v-model="password_2" maxlength="20" placeholder="Подтвердите пароль" type="password"
                            @input="checkPasswords" class="mb-0"/>
                     <div class="message">{{ error }}</div>
                 </div>
@@ -29,6 +29,7 @@
 <script>
 import router from '@/router/router.js';
 import {mapActions, mapGetters, mapMutations} from 'vuex';
+import {filterTel, filter} from '@/utils.js';
 
 export default {
     data() {
@@ -58,22 +59,12 @@ export default {
         authorization() {
             router.push('/authorization');
         },
-        filterName() {
-            const regex = /^[А-Яа-яЁё\s]*$/;
-            this.setError('')
-            if (!regex.test(this.name)) {
-                this.setError('Разрешены только русские буквы!')
-                this.name = this.name.replace(/[^А-Яа-яЁё\s]/g, '');
-            }
+        updateTel(event) {
+            this.tel = filterTel(event.target.value, this.setError)
         },
-        filterTel() {
-            const regex = /^[0-9()\s+-]*$/;
-            this.setError('')
-            if (!regex.test(this.tel)) {
-                this.setError('Разрешены только цифры и специальные символы!')
-                this.tel = this.tel.replace(/[^0-9()\s+-]/g, '');
-            }
-        }
+        updateName(event) {
+            this.name = filter(event.target.value, this.setError)
+        },
     },
     computed: {
         ...mapGetters('error', ['error']),

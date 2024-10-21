@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
     <div class="layout">
         <router-view name="sidebar" class="layout-left pr-2" v-slot="{ Component }">
@@ -16,6 +12,10 @@
         </router-view>
     </div>
 </template>
+
+<script>
+
+</script>
 
 <style scoped>
 .layout {

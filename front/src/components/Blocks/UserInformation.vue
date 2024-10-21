@@ -1,12 +1,11 @@
 <template>
     <div class="window">
         <div class="header">
-            <div class="fio">{{ userInfo.fam }} {{ userInfo.name }} {{ userInfo.otch }}</div>
+            <div class="fio">{{ user.fam }} {{ user.name }} {{ user.otch }}</div>
             <div class="online">последний раз в сети 15.09.24 15:16</div>
         </div>
         <div class="main">
-            <img v-if="user.photo" class="photo" :src="photo" alt="userPhoto"/>
-            <img v-if="!user.photo" class="photo" :src="img" alt="userPhoto"/>
+            <img class="photo" :src="photo" alt="userPhoto"/>
             <div class="information">
                 <div v-if="dateOfBirth" class="info">
                     <div>День рождения:</div>
@@ -22,58 +21,45 @@
                 </div>
                 <div class="info">
                     <div>Номер телефон</div>
-                    <div>{{ userInfo.tel }}</div>
+                    <div>{{ user.tel }}</div>
                 </div>
-<!--                <div class="info">-->
-<!--                    <div>Место учёбы:</div>-->
-<!--                    <div>СОШ №15</div>-->
-<!--                </div>-->
-<!--                <div class="info">-->
-<!--                    <div>Место работы:</div>-->
-<!--                    <div>ООО "СОЦ-ИНФОРМ"</div>-->
-<!--                </div>-->
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import {mapActions, mapGetters, mapMutations} from 'vuex';
 import moment from 'moment';
-import img from '@/assets/images/default_photo_user.png';
 
 
 export default {
-    data() {
-        return {
-            img: img
-        };
+    props: {
+        user: {
+            type: Object,
+            required: true
+        },
+        photo: {
+            type: null,
+            required: true
+        }
     },
     computed: {
-        ...mapGetters('user',['user']),
-        userInfo() {
-            return this.user || {};
-        },
-        photo() {
-            return `http://localhost:8080/api/files/photo/user/${this.user.photo}`;
-        },
         dateOfBirth() {
-            return this.userInfo.dateOfBirth
-                ? moment(this.userInfo.dateOfBirth).format('DD.MM.YYYY')
+            return this.user.dateOfBirth
+                ? moment(this.user.dateOfBirth).format('DD.MM.YYYY')
                 : '';
         },
         age() {
-            if (this.userInfo.dateOfBirth) {
-                const birthDate = moment(this.userInfo.dateOfBirth);
+            if (this.user.dateOfBirth) {
+                const birthDate = moment(this.user.dateOfBirth);
                 return moment().diff(birthDate, 'years'); // Расчет возраста
             }
             return ''; // Если дата рождения отсутствует
         },
         sex(){
-            return this.userInfo.sex ? (this.userInfo.sex === 1 ? 'Мужской' : 'Женский') : '';
+            return this.user.sex ? (this.user.sex === 1 ? 'Мужской' : 'Женский') : '';
         }
-    }
-
+    },
 };
 </script>
 

@@ -2,8 +2,8 @@ import {createRouter, createWebHistory} from 'vue-router';
 import Authorization from '@/components/Pages/AuthorizationPage.vue';
 import Main from '@/components/Sections/Main.vue';
 import Registration from '@/components/Pages/RegistrationPage.vue';
-import Page from '@/components/Pages/UserPage.vue';
-import Page2 from '@/components/Pages/UserPage2.vue';
+import Page from '@/components/Pages/MyUserPage.vue';
+import UserPage from '@/components/Pages/UserPage.vue';
 import Sidebar from '@/components/Bar/Sidebar.vue';
 import store from '@/store/index.js';
 import SettingPage from '@/components/Pages/SettingPage.vue';
@@ -41,19 +41,19 @@ const routes = [
         meta: {requiresAuth: true}
     },
     {
-        path: '/all-users',
-        name: 'all-users',
-        components: {
-            default: AllUserListPage,
+        path: '/user/:id',
+        name: 'user',
+        components:  {
+            default: UserPage,
             sidebar: Sidebar
         },
         meta: {requiresAuth: true}
     },
     {
-        path: '/page2',
-        name: 'page2',
+        path: '/all-users',
+        name: 'all-users',
         components: {
-            default: Page2,
+            default: AllUserListPage,
             sidebar: Sidebar
         },
         meta: {requiresAuth: true}
