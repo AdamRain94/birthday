@@ -1,6 +1,7 @@
 <template>
     <div>
-        <img class="user-photo" :src="photo" alt="user-photo">
+        <div v-if="loading" class="user-photo loading"></div>
+        <img v-else class="user-photo" :class="{loading : loading}" :src="photo" alt="user-photo">
         <div class="user-information">
             <div>{{ user.fam }}</div>
             <div>{{ user.name }}</div>
@@ -24,11 +25,17 @@ export default {
     },
     data() {
         return {
-            photo: default_photo
+            loading: false,
+            photo: null
         };
     },
     async mounted() {
-        this.photo = await loadUserPhoto(this.user);
+        this.loading = true;
+        try {
+            this.photo = await loadUserPhoto(this.user);
+        } finally {
+            this.loading = false;
+        }
     },
     methods: {
         dateOfBirth(date) {
@@ -54,4 +61,5 @@ export default {
 .user-information {
     padding: 10px 0;
 }
+
 </style>

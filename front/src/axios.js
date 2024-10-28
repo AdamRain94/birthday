@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '@/store/index.js'; // Импортируйте index
+import store from '@/store/index.js';
 
 let isRefreshing = false;
 let subscribers = [];
@@ -15,6 +15,7 @@ function addSubscriber(callback) {
 
 const apiClient = axios.create({
     baseURL: 'http://localhost:8080/api',
+    // baseURL: ' https://f852-90-156-254-47.ngrok-free.app/api',
 });
 
 apiClient.interceptors.request.use((config) => {

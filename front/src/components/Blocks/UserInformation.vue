@@ -2,10 +2,11 @@
     <div class="window">
         <div class="header">
             <div class="fio">{{ user.fam }} {{ user.name }} {{ user.otch }}</div>
-            <div class="online">последний раз в сети 15.09.24 15:16</div>
+<!--            <div class="online">последний раз в сети 15.09.24 15:16</div>-->
         </div>
         <div class="main">
-            <img class="photo" :src="photo" alt="userPhoto"/>
+            <div v-if="loading" class="photo loading"></div>
+            <img v-else class="photo" :src="photo" alt="userPhoto"/>
             <div class="information">
                 <div v-if="dateOfBirth" class="info">
                     <div>День рождения:</div>
@@ -41,6 +42,10 @@ export default {
         photo: {
             type: null,
             required: true
+        },
+        loading: {
+            default: true,
+            type: Boolean,
         }
     },
     computed: {

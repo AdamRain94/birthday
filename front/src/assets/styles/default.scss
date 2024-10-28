@@ -51,9 +51,11 @@ input {
 input:focus {
   outline: none;
 }
-input::placeholder{
+
+input::placeholder {
   color: var(--3-color20);
 }
+
 a {
   text-decoration: none;
 }
@@ -112,6 +114,22 @@ a {
   display: flex;
   padding: 10px;
   min-height: 30px;
+}
+
+.loading {
+  background: linear-gradient(90deg, var(--2-color) 0%, var(--2-color20) 50%, var(--2-color) 100%);
+  background-size: 200% 100%;
+  animation: loadingAnimation 1.5s ease-in-out infinite;
+  color: var(--3-color);
+}
+
+@keyframes loadingAnimation {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .p-0 {

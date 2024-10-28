@@ -1,6 +1,6 @@
 <template>
     <div class="container" v-if="user">
-        <UserInformation :photo="photo" :user="user" class="mb-2"/>
+        <UserInformation :photo="photo" :loading="loading" :user="user" class="mb-2"/>
         <div class="block_2">
             <div class="left mr-2">
                 <UserDesires/>
@@ -24,15 +24,21 @@ import default_photo from '@/assets/images/default_photo_user.png';
 export default {
     components: {UserDesires, UserInformation, UserSubscriptions},
     computed: {
-        ...mapGetters('user', ['user']),
+        ...mapGetters('user', ['user'])
     },
     data() {
         return {
             photo: default_photo,
+            loading: false
         };
     },
     async mounted() {
-        this.photo = await loadUserPhoto(this.user);
+        this.loading = true;
+        try {
+            this.photo = await loadUserPhoto(this.user);
+        } finally {
+            this.loading = false;
+        }
         document.title = (this.user.name || '') + ' ' + (this.user.fam || '');
     }
 };

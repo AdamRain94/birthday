@@ -1,6 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import Authorization from '@/components/Pages/AuthorizationPage.vue';
-import Main from '@/components/Sections/Main.vue';
 import Registration from '@/components/Pages/RegistrationPage.vue';
 import Page from '@/components/Pages/MyUserPage.vue';
 import UserPage from '@/components/Pages/UserPage.vue';
@@ -18,12 +17,6 @@ const routes = [
         name: 'Authorization',
         component: Authorization,
         meta: {requiresAuth: false}
-    },
-    {
-        path: '/',
-        name: 'Home',
-        component: Main,
-        meta: {requiresAuth: true}
     },
     {
         path: '/registration',
@@ -82,6 +75,10 @@ const routes = [
             }
         ],
         meta: {requiresAuth: true}
+    },
+    {
+        path: '/:catchAll(.*)', // Ловит любые другие пути
+        redirect: '/page' // Перенаправление на /page
     }
 ];
 

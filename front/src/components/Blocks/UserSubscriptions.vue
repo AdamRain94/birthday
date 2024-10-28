@@ -40,6 +40,7 @@ export default {
 <style scoped>
 .main {
     flex-direction: column;
+    gap: 10px;
 }
 
 .user {
@@ -48,7 +49,6 @@ export default {
     gap: 8px;
     cursor: pointer;
     border-radius: 6px;
-    padding: 5px;
     overflow: hidden;
 }
 

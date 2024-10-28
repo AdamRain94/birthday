@@ -4,19 +4,19 @@
             class="year"
             v-model="selectedYear"
             :options="years"
-            placeholder="1986"
+            placeholder="Год"
         />
         <v-select
             class="month"
             v-model="selectedMonth"
             :options="months"
-            placeholder="Апр"
+            placeholder="Месяц"
         />
         <v-select
             class="day"
             v-model="selectedDay"
             :options="daysInMonth"
-            placeholder="26"
+            placeholder="День"
         />
     </div>
 </template>
@@ -43,10 +43,9 @@ export default {
     },
     computed: {
         daysInMonth() {
-            const monthIndex = this.months.indexOf(this.selectedMonth); // Индекс выбранного месяца
+            let monthIndex = this.months.indexOf(this.selectedMonth); // Индекс выбранного месяца
             const year = this.selectedYear || new Date().getFullYear(); // Если год не выбран, использовать текущий год
-
-            if (monthIndex === -1) return []; // Если месяц не выбран
+            if (monthIndex === -1) monthIndex = 0; // Если месяц не выбран
 
             return this.getDaysInMonth(year, monthIndex);
         }

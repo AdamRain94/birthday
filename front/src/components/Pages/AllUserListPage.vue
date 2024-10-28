@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="user-list-block">
-            <div class="window">
+            <div class="window" :class="{'min-height': loading}">
                 <div class="header">
                     Пользователи
                 </div>
@@ -17,8 +17,16 @@
                     Поиск
                 </div>
                 <div class="main">
-
+                    <input placeholder="Имя"/>
+                    <input placeholder="Фамилия"/>
+                    <input placeholder="Отчество"/>
+                    <date-of-birthday class="value"/>
                 </div>
+            </div>
+            <div class="buttons">
+                <button class="btn">
+                    <span>Поиск</span>
+                </button>
             </div>
         </div>
     </div>
@@ -28,22 +36,29 @@
 import api from '@/axios.js';
 import UserViewInListPage from '@/components/Blocks/UserViewInListPage.vue';
 import router from '@/router/router.js';
+import DateOfBirthday from '@/components/UI/DateOfBirthdaySelect.vue';
 
 export default {
-    components: {UserViewInListPage},
+    components: {DateOfBirthday, UserViewInListPage},
     data() {
         return {
-            users: []
+            users: [],
+            loading: false
         };
     },
     methods: {
         async getAllUsers() {
-            let response = await api.get('users/all');
-            this.users = response.data;
+            this.loading = true;
+            try {
+                let response = await api.get('users/all');
+                this.users = response.data;
+            } finally {
+                this.loading = false;
+            }
         },
         goToPageUser(id) {
             router.push(`/user/${id}`);
-        },
+        }
     },
     mounted() {
         this.getAllUsers();
@@ -62,6 +77,10 @@ export default {
     min-width: 560px;
     height: 100%;
     padding-right: 20px;
+}
+
+.min-height {
+    min-height: 300px;
 }
 
 .search-block {
@@ -89,4 +108,13 @@ export default {
 .user:last-child {
     margin-bottom: 0; /* Последнему элементу отступ не нужен */
 }
+
+.window {
+    margin-bottom: 20px;
+}
+
+.btn {
+    border-radius: 10px;
+}
+
 </style>
