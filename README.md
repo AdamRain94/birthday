@@ -8,17 +8,19 @@
 <b>Архитектура:</b> REST API на Spring Boot для взаимодействия с фронтендом через Axios. Управление маршрутизацией на фронте с помощью Vue Router, управление состоянием через Vuex.<br/>
 <b>Базы данных:</b> PostgreSQL для хранения данных и Redis для кэширования.<br/>
 
-Страница авторизации
-![Страница авторизации](https://github.com/AdamRain94/birthday/blob/main/img_for_readme/1.png)
+### Скриншоты приложения:
 
-Страница регистрации
-![Страница регистрации](https://github.com/AdamRain94/birthday/blob/main/img_for_readme/2.png)
+**Страница авторизации**  
+<img src="https://github.com/AdamRain94/birthday/blob/main/img_for_readme/1.png" alt="Страница авторизации" width="500"/>
 
-Настройка личной информации пользователя
-![Настройка личной информации пользователя](https://github.com/AdamRain94/birthday/blob/main/img_for_readme/3.png)
+**Страница регистрации**  
+<img src="https://github.com/AdamRain94/birthday/blob/main/img_for_readme/2.png" alt="Страница регистрации" width="500"/>
 
-Личная страница пользователя
-![Личная страница пользователя](https://github.com/AdamRain94/birthday/blob/main/img_for_readme/4.png)
+**Настройка личной информации пользователя**  
+<img src="https://github.com/AdamRain94/birthday/blob/main/img_for_readme/3.png" alt="Настройка личной информации пользователя" width="500"/>
 
-Спсиок всех пользователей и поиск по определенным данным
-![Спсиок всех пользователей и поиск по определенным данным](https://github.com/AdamRain94/birthday/blob/main/img_for_readme/5.png)
+**Личная страница пользователя**  
+<img src="https://github.com/AdamRain94/birthday/blob/main/img_for_readme/4.png" alt="Личная страница пользователя" width="500"/>
+
+**Список всех пользователей и поиск по данным**  
+<img src="https://github.com/AdamRain94/birthday/blob/main/img_for_readme/5.png" alt="Список всех пользователей и поиск по данным" width="500"/>
